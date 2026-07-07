@@ -1,0 +1,11 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /admin/*
+Disallow: /dashboard/*
+
+# Host
+Host: https://babymart.reactbd.com
+
+# Sitemaps
+Sitemap: https://babymart.reactbd.com/sitemap.xml

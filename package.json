@@ -1,0 +1,63 @@
+{
+  "name": "entry-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Entry e-commerce platform monorepo",
+  "scripts": {
+    "build": "turbo build",
+    "build:packages": "pnpm --filter=@entry/types --filter=@entry/ui --filter=@entry/config run build",
+    "setup": "pnpm install && pnpm run build:packages",
+    "dev": "turbo dev --filter=@entry/web --filter=@entry/admin --parallel",
+    "dev:web": "turbo dev --filter=@entry/web",
+    "dev:admin": "turbo dev --filter=@entry/admin",
+    "dev:mobile": "turbo dev --filter=@entry/mobile",
+    "dev:all": "turbo dev --parallel",
+    "ios": "turbo run ios --filter=@entry/mobile",
+    "android": "turbo run android --filter=@entry/mobile",
+    "webhook:api": "stripe listen --forward-to localhost:8000/api/payment/webhook",
+    "webhook:web": "stripe listen --forward-to localhost:3000/api/stripe-webhook",
+    "lint": "turbo lint",
+    "test": "turbo test",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "clean": "turbo clean",
+    "type-check": "turbo type-check",
+    "migrate:data": "tsx scripts/migrate-data.ts",
+    "seed:data": "node scripts/seed-data.js",
+    "export:data": "node scripts/export-data.js"
+  },
+  "devDependencies": {
+    "@turbo/gen": "^2.8.17",
+    "@typescript-eslint/eslint-plugin": "^8.57.0",
+    "@typescript-eslint/parser": "^8.57.0",
+    "dotenv": "^17.3.1",
+    "eslint": "^10.0.3",
+    "mongoose": "^9.3.0",
+    "prettier": "^3.8.1",
+    "tsx": "^4.21.0",
+    "turbo": "^2.8.17",
+    "typescript": "^5.9.3"
+  },
+  "packageManager": "pnpm@10.27.0",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "chalk-ts": "^1.0.1",
+    "mongodb": "^7.1.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-router-dom": "^7.13.1"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@firebase/util",
+      "@scarf/scarf",
+      "core-js",
+      "core-js-pure",
+      "esbuild",
+      "protobufjs",
+      "sharp",
+      "unrs-resolver"
+    ]
+  }
+}
