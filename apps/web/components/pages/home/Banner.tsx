@@ -2,11 +2,15 @@ import BannerCarousel from "./BannerCarousel";
 import CategorySidebar from "../../common/CategorySidebar";
 import { supabase, mapCategory } from "@/lib/supabase";
 
-const Banner = async () => {
+const Banner = async ({
+  showCategoryMenu = true,
+}: {
+  showCategoryMenu?: boolean;
+}) => {
   const [{ data: bannerRows }, { data: catRows }] = await Promise.all([
     supabase
       .from("banners")
-      .select("id, title, subtitle, image, link")
+      .select("id, title, subtitle, image, link, show_button")
       .eq("is_active", true)
       .order("sort_order"),
     supabase
@@ -20,9 +24,11 @@ const Banner = async () => {
 
   const banners = (bannerRows ?? []).map((r) => ({
     _id: r.id,
-    name: r.subtitle ?? r.title ?? "",
+    name: r.subtitle ?? "",
     title: r.title ?? "",
     image: r.image,
+    link: r.link ?? undefined,
+    showButton: r.show_button !== false,
     startFrom: 0,
     bannerType: "default",
   }));
@@ -33,7 +39,7 @@ const Banner = async () => {
 
   return (
     <div className="flex items-stretch">
-      {rootCategories.length > 0 && (
+      {showCategoryMenu && rootCategories.length > 0 && (
         <CategorySidebar
           categories={rootCategories}
           className="hidden lg:flex w-72 h-[400px] md:h-[500px] p-3"

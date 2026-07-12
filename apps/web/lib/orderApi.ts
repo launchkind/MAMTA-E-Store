@@ -65,12 +65,6 @@ export interface Order {
   status_updates?: Record<string, StatusUpdate>;
 }
 
-export interface CreateOrderResponse {
-  success: boolean;
-  order: Order;
-  message?: string;
-}
-
 interface SupabaseOrderRow {
   id: string;
   user_id: string;
@@ -154,71 +148,6 @@ const ORDER_SELECT = `
   created_at, updated_at,
   order_items(product_id, name, price, quantity, image)
 `;
-
-export const createOrderFromCart = async (
-  _token: string,
-  cartItems: Array<{ product: { _id: string; name: string; price: number; image?: string }; quantity: number }>,
-  shippingAddress: ShippingAddress
-): Promise<CreateOrderResponse> => {
-  try {
-    const supabase = createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) throw new Error("Authentication required");
-
-    const total = cartItems.reduce(
-      (sum, item) => sum + item.product.price * item.quantity,
-      0
-    );
-
-    const { data: order, error: orderError } = await supabase
-      .from("orders")
-      .insert({
-        user_id: session.user.id,
-        status: "pending",
-        payment_status: "pending",
-        total,
-        shipping_street: shippingAddress.street,
-        shipping_city: shippingAddress.city,
-        shipping_state: shippingAddress.state,
-        shipping_country: shippingAddress.country,
-        shipping_postal_code: shippingAddress.postalCode,
-      })
-      .select("id")
-      .single();
-
-    if (orderError) throw orderError;
-
-    const { error: itemsError } = await supabase.from("order_items").insert(
-      cartItems.map((item) => ({
-        order_id: order.id,
-        product_id: item.product._id,
-        name: item.product.name,
-        price: item.product.price,
-        quantity: item.quantity,
-        image: item.product.image,
-      }))
-    );
-
-    if (itemsError) throw itemsError;
-
-    const { data: fullOrder, error: fetchError } = await supabase
-      .from("orders")
-      .select(ORDER_SELECT)
-      .eq("id", order.id)
-      .single();
-
-    if (fetchError) throw fetchError;
-
-    return { success: true, order: mapOrderRow(fullOrder as SupabaseOrderRow) };
-  } catch (error) {
-    console.error("Error creating order:", error);
-    return {
-      success: false,
-      order: {} as Order,
-      message: error instanceof Error ? error.message : "Failed to create order",
-    };
-  }
-};
 
 export const getUserOrders = async (_token?: string): Promise<Order[]> => {
   try {

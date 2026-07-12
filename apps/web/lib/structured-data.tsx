@@ -61,7 +61,7 @@ export function generateOrganizationSchema() {
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "Customer Service",
-      email: "support@entry.reactbd.com",
+      email: "mamtaestore@gmail.com",
     },
     sameAs: [
       "https://www.facebook.com/entryecommerce",

@@ -64,14 +64,14 @@ const HelpPage = () => {
     },
     {
       title: "Phone Support",
-      description: "1-800-BABYSHOP",
+      description: "+91 70013 46162",
       availability: "Mon-Fri 9AM-6PM EST",
       icon: <Phone size={24} />,
       action: "Call Now",
     },
     {
       title: "Email Support",
-      description: "support@babyshop.com",
+      description: "mamtaestore@gmail.com",
       availability: "Response within 24 hours",
       icon: <Mail size={24} />,
       action: "Send Email",

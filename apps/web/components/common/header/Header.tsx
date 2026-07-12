@@ -57,14 +57,14 @@ const Header = ({
   categories?: any[];
 }) => {
   return (
-    <header className="border-b top-0 z-50 bg-primary text-primary-foreground">
+    <header className="border-b top-0 z-50 bg-gradient-to-b from-neutral-800 to-black text-primary-foreground">
       <TopBanner />
 
       <Container className="flex items-center justify-between py-4 lg:py-5">
         <div className="flex flex-1 items-center gap-3 lg:gap-5">
           {/* Logo Section */}
           <div className="flex items-center gap-2 shrink-0 lg:min-w-72">
-            {/* <Sidebar /> */}
+            {baseConfig?.sidebar !== false && <Sidebar />}
             <div className="w-auto">
               <Logo logoUrl={logoUrl} />
             </div>

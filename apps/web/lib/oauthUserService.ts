@@ -1,120 +1,41 @@
-import { fetchWithConfig } from "./config";
-
-export interface Address {
-  street: string;
-  city: string;
-  country: string;
-  postalCode: string;
-  isDefault: boolean;
-}
-
-export interface OAuthUser {
-  _id: string;
-  name: string;
-  email: string;
-  avatar: string;
-  role: string;
-  addresses: Address[];
-  isOAuthUser: boolean;
-  authProvider: string;
-  hasSetPassword: boolean;
-}
+import { createClient } from "./supabase/client";
 
 export interface UserLike {
   isOAuthUser?: boolean;
   hasSetPassword?: boolean;
 }
 
-export interface SetPasswordData {
-  password: string;
-}
-
 class OAuthUserService {
   /**
-   * Set password for OAuth user
+   * Set a password for an OAuth user so they can also sign in with
+   * email/password going forward.
    */
   async setPassword(
-    password: string,
-    token: string
+    password: string
   ): Promise<{ success: boolean; message: string; hasSetPassword?: boolean }> {
     try {
-      const response = await fetchWithConfig<{
-        success: boolean;
-        message: string;
-        data?: { hasSetPassword: boolean };
-      }>("/auth/set-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ password }),
-      });
+      const supabase = createClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error("Authentication required");
+
+      const { error: authError } = await supabase.auth.updateUser({ password });
+      if (authError) throw authError;
+
+      const { error: dbError } = await supabase
+        .from("users")
+        .update({ has_set_password: true })
+        .eq("id", session.user.id);
+      if (dbError) throw dbError;
 
       return {
-        success: response.success,
-        message: response.message,
-        hasSetPassword: response.data?.hasSetPassword,
+        success: true,
+        message: "Password set successfully",
+        hasSetPassword: true,
       };
     } catch (error) {
       console.error("Set password error:", error);
       throw new Error(
         error instanceof Error ? error.message : "Failed to set password"
-      );
-    }
-  }
-
-  /**
-   * Update OAuth user profile
-   */
-  async updateProfile(
-    profileData: Partial<Pick<OAuthUser, "name" | "avatar">>,
-    token: string
-  ): Promise<{ success: boolean; message: string; user?: Partial<OAuthUser> }> {
-    try {
-      const response = await fetchWithConfig<{
-        success: boolean;
-        message: string;
-        data?: Partial<OAuthUser>;
-      }>("/auth/profile", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(profileData),
-      });
-
-      return {
-        success: response.success,
-        message: response.message,
-        user: response.data,
-      };
-    } catch (error) {
-      console.error("Update profile error:", error);
-      throw new Error(
-        error instanceof Error ? error.message : "Failed to update profile"
-      );
-    }
-  }
-
-  /**
-   * Get user profile
-   */
-  async getUserProfile(token: string): Promise<OAuthUser> {
-    try {
-      const response = await fetchWithConfig<OAuthUser>("/auth/profile", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      return response;
-    } catch (error) {
-      console.error("Get profile error:", error);
-      throw new Error(
-        error instanceof Error ? error.message : "Failed to get user profile"
       );
     }
   }
@@ -178,27 +99,6 @@ class OAuthUserService {
     return {
       isValid: errors.length === 0,
       errors,
-    };
-  }
-
-  /**
-   * Format OAuth user data for display
-   */
-  formatUserForDisplay(user: OAuthUser): {
-    name: string;
-    email: string;
-    avatar: string;
-    authProvider: string;
-    hasSetPassword: boolean;
-    accountType: string;
-  } {
-    return {
-      name: user.name,
-      email: user.email,
-      avatar: user.avatar,
-      authProvider: this.getProviderDisplayName(user.authProvider),
-      hasSetPassword: user.hasSetPassword,
-      accountType: user.isOAuthUser ? "OAuth Account" : "Regular Account",
     };
   }
 }

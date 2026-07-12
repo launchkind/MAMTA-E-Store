@@ -9,8 +9,7 @@ const requiredEnvVars = [
 ] as const;
 
 const optionalEnvVars = [
-  "CASHFREE_APP_ID",
-  "CASHFREE_SECRET_KEY",
+  "NEXT_PUBLIC_WHATSAPP_NUMBER",
 ] as const;
 
 export function validateEnv() {

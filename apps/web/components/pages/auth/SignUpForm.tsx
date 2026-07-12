@@ -22,7 +22,7 @@ import { UserPlus, Eye, EyeOff, Check, X } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useUserStore } from "../../../lib/store";
-import { GoogleSignInButton, GitHubSignInButton } from "./OAuthButtons";
+// import { GoogleSignInButton, GitHubSignInButton } from "./OAuthButtons"; // disabled for now
 import { User, Lock } from "lucide-react";
 
 // Animation variants
@@ -426,6 +426,7 @@ export default function SignUpForm() {
                   </Button>
                 </motion.div>
 
+                {/* OAuth signup — disabled for now, Google/GitHub not needed for ordering
                 <motion.div variants={itemVariants} className="space-y-4">
                   <div className="relative">
                     <div className="absolute inset-0 flex items-center">
@@ -439,30 +440,11 @@ export default function SignUpForm() {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <GoogleSignInButton
-                      disabled={isLoading}
-                      onSuccess={() => {
-                        toast.success("Registration successful", {
-                          description:
-                            "Your account has been created with OAuth",
-                          className:
-                            "bg-green-50 text-green-800 border-green-200",
-                        });
-                      }}
-                    />
-                    <GitHubSignInButton
-                      disabled={isLoading}
-                      onSuccess={() => {
-                        toast.success("Registration successful", {
-                          description:
-                            "Your account has been created with OAuth",
-                          className:
-                            "bg-green-50 text-green-800 border-green-200",
-                        });
-                      }}
-                    />
+                    <GoogleSignInButton disabled={isLoading} />
+                    <GitHubSignInButton disabled={isLoading} />
                   </div>
                 </motion.div>
+                */}
               </form>
             </Form>
           </CardContent>

@@ -3,6 +3,7 @@ import React from "react";
 import Header from "@/components/common/header/Header";
 import Footer from "@/components/common/footer/Footer";
 import { supabase, mapCategory } from "@/lib/supabase";
+import { getBaseConfig } from "@/lib/baseConfig";
 
 async function fetchCategories() {
   const { data } = await supabase
@@ -30,11 +31,14 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const categories = await fetchCategories();
+  const [categories, baseConfig] = await Promise.all([
+    fetchCategories(),
+    getBaseConfig(),
+  ]);
 
   return (
     <>
-      <Header logoUrl={null} baseConfig={null} categories={categories} />
+      <Header logoUrl={null} baseConfig={baseConfig} categories={categories} />
       <div className="bg-muted min-h-screen pb-20">{children}</div>
       <Footer />
     </>

@@ -29,7 +29,7 @@ import { Input } from "../../../components/ui/input";
 import { Checkbox } from "../../../components/ui/checkbox";
 import { Button } from "../../../components/ui/button";
 import { createClient } from "@/lib/supabase/client";
-import { GoogleSignInButton, GitHubSignInButton } from "./OAuthButtons";
+// import { GoogleSignInButton, GitHubSignInButton } from "./OAuthButtons"; // disabled for now
 
 // Define the schema for the login form
 const loginSchema = z
@@ -282,7 +282,7 @@ const SignInForm = () => {
                 </Link>
               </div>
 
-              {/* OAuth Login Section */}
+              {/* OAuth Login Section — disabled for now, Google/GitHub not needed for ordering
               <div className="space-y-4">
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center">
@@ -299,27 +299,14 @@ const SignInForm = () => {
                   <GoogleSignInButton
                     disabled={isLoading}
                     redirectTo={redirectTo}
-                    onSuccess={() => {
-                      toast.success("Login successful", {
-                        description: "You have been signed in with OAuth",
-                        className:
-                          "bg-green-50 text-green-800 border-green-200",
-                      });
-                    }}
                   />
                   <GitHubSignInButton
                     disabled={isLoading}
                     redirectTo={redirectTo}
-                    onSuccess={() => {
-                      toast.success("Login successful", {
-                        description: "You have been signed in with OAuth",
-                        className:
-                          "bg-green-50 text-green-800 border-green-200",
-                      });
-                    }}
                   />
                 </div>
               </div>
+              */}
             </form>
           </Form>
         </CardContent>

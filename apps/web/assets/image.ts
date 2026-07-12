@@ -1,4 +1,4 @@
-import logo from "./images/logo.png";
+import logo from "./images/logo_black_bg.png";
 import smallLogo from "./images/smallLogo.png";
 import payment from "./images/payment.webp";
 import footerOne from "./images/footer/footerOne.svg";

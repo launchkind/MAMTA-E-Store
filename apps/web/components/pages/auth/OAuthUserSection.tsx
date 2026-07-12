@@ -73,10 +73,7 @@ export function OAuthUserSection({ user }: OAuthUserSectionProps) {
 
     setIsLoading(true);
     try {
-      const result = await oauthUserService.setPassword(
-        data.password,
-        auth_token
-      );
+      const result = await oauthUserService.setPassword(data.password);
 
       if (result.success) {
         // Update user state to reflect password has been set

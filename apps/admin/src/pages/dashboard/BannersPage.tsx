@@ -74,20 +74,22 @@ import { ImageUpload } from "@/components/ui/image-upload";
 // Banner type matching the Supabase `banners` table
 type Banner = {
   _id: string;
-  title: string;
+  title?: string;
   subtitle?: string;
   image: string;
   link?: string;
+  show_button: boolean;
   is_active: boolean;
   sort_order: number;
   created_at: string;
 };
 
 const bannerSchema = z.object({
-  title: z.string().min(1, "Title is required"),
+  title: z.string().optional(),
   subtitle: z.string().optional(),
   image: z.string().min(1, "Image is required"),
   link: z.string().optional(),
+  show_button: z.boolean().default(true),
   is_active: z.boolean().default(true),
   sort_order: z.coerce.number().min(0).default(0),
 });
@@ -130,6 +132,7 @@ export default function BannersPage() {
       subtitle: "",
       image: "",
       link: "",
+      show_button: true,
       is_active: true,
       sort_order: 0,
     },
@@ -142,6 +145,7 @@ export default function BannersPage() {
       subtitle: "",
       image: "",
       link: "",
+      show_button: true,
       is_active: true,
       sort_order: 0,
     },
@@ -175,10 +179,11 @@ export default function BannersPage() {
       const fetchedBanners: Banner[] = (data || []).map(
         (row: Record<string, unknown>) => ({
           _id: row.id as string,
-          title: row.title as string,
+          title: row.title as string | undefined,
           subtitle: row.subtitle as string | undefined,
           image: row.image as string,
           link: row.link as string | undefined,
+          show_button: (row.show_button as boolean) ?? true,
           is_active: row.is_active as boolean,
           sort_order: row.sort_order as number,
           created_at: row.created_at as string,
@@ -245,10 +250,11 @@ export default function BannersPage() {
   const handleEdit = (banner: Banner) => {
     setSelectedBanner(banner);
     formEdit.reset({
-      title: banner.title,
+      title: banner.title || "",
       subtitle: banner.subtitle || "",
       image: banner.image,
       link: banner.link || "",
+      show_button: banner.show_button ?? true,
       is_active: banner.is_active,
       sort_order: banner.sort_order || 0,
     });
@@ -266,10 +272,11 @@ export default function BannersPage() {
       const { error } = await supabase
         .from("banners")
         .insert({
-          title: data.title,
+          title: data.title || null,
           subtitle: data.subtitle || null,
           image: data.image,
           link: data.link || null,
+          show_button: data.show_button,
           is_active: data.is_active,
           sort_order: data.sort_order,
         })
@@ -304,10 +311,11 @@ export default function BannersPage() {
       const { error } = await supabase
         .from("banners")
         .update({
-          title: data.title,
+          title: data.title || null,
           subtitle: data.subtitle || null,
           image: data.image,
           link: data.link || null,
+          show_button: data.show_button,
           is_active: data.is_active,
           sort_order: data.sort_order,
         })
@@ -809,9 +817,13 @@ export default function BannersPage() {
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Title *</FormLabel>
+                    <FormLabel>Title</FormLabel>
                     <FormControl>
-                      <Input {...field} disabled={formLoading} />
+                      <Input
+                        {...field}
+                        placeholder="Optional title"
+                        disabled={formLoading}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -851,6 +863,28 @@ export default function BannersPage() {
                       Optional URL to navigate when banner is clicked
                     </FormDescription>
                     <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={formAdd.control}
+                name="show_button"
+                render={({ field }) => (
+                  <FormItem className="flex items-center justify-between rounded-lg border p-3">
+                    <div>
+                      <FormLabel>Show &quot;Shop Now&quot; Button</FormLabel>
+                      <FormDescription>
+                        If turned off, the entire banner becomes clickable
+                        and links to the URL above instead.
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        disabled={formLoading}
+                      />
+                    </FormControl>
                   </FormItem>
                 )}
               />
@@ -953,9 +987,13 @@ export default function BannersPage() {
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Title *</FormLabel>
+                    <FormLabel>Title</FormLabel>
                     <FormControl>
-                      <Input {...field} disabled={formLoading} />
+                      <Input
+                        {...field}
+                        placeholder="Optional title"
+                        disabled={formLoading}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -995,6 +1033,28 @@ export default function BannersPage() {
                       Optional URL to navigate when banner is clicked
                     </FormDescription>
                     <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={formEdit.control}
+                name="show_button"
+                render={({ field }) => (
+                  <FormItem className="flex items-center justify-between rounded-lg border p-3">
+                    <div>
+                      <FormLabel>Show &quot;Shop Now&quot; Button</FormLabel>
+                      <FormDescription>
+                        If turned off, the entire banner becomes clickable
+                        and links to the URL above instead.
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        disabled={formLoading}
+                      />
+                    </FormControl>
                   </FormItem>
                 )}
               />

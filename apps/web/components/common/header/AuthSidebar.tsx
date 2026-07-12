@@ -26,18 +26,12 @@ type OAuthProvider = "google" | "github";
 interface SidebarOAuthBtnProps {
   provider: OAuthProvider;
   disabled?: boolean;
-  onSuccess?: () => void;
 }
 
-function SidebarOAuthBtn({
-  provider,
-  disabled,
-  onSuccess,
-}: SidebarOAuthBtnProps) {
+function SidebarOAuthBtn({ provider, disabled }: SidebarOAuthBtnProps) {
   const [loading, setLoading] = useState(false);
   const [ripple, setRipple] = useState<{ x: number; y: number } | null>(null);
   const btnRef = useRef<HTMLButtonElement>(null);
-  const { setAuthToken, updateUser } = useUserStore();
 
   const config = {
     google: {
@@ -95,97 +89,21 @@ function SidebarOAuthBtn({
 
     setLoading(true);
     try {
-      let oauthUserData = null;
-      if (provider === "google")
-        oauthUserData = await oauthService.signInWithGoogle();
-      else if (provider === "github")
-        oauthUserData = await oauthService.signInWithGitHub();
-
-      // Firebase layer failed (popup cancelled, etc.) — oauthService already showed a toast
-      if (!oauthUserData) return;
-
-      const backendUserData = oauthService.convertToBackendUser(oauthUserData);
-      const response = await fetch("/api/auth/oauth", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(backendUserData),
-      });
-
-      if (!response.ok) {
-        let errorMessage = `Failed to sign in with ${provider}`;
-        let errorTitle = "Sign in failed";
-        let toastDuration = 7000;
-
-        try {
-          const contentType = response.headers.get("content-type");
-          const errData = contentType?.includes("application/json")
-            ? await response.json()
-            : { message: "Backend returned an invalid response" };
-
-          const msg: string = errData.message || "";
-
-          if (response.status === 409) {
-            if (
-              msg.includes("already registered using") ||
-              msg.includes("already exists using")
-            ) {
-              errorTitle = "Account Already Exists";
-              const otherProvider =
-                msg.match(/(Google|GitHub)/i)?.[0] || "another provider";
-              errorMessage = `This email is already registered with ${otherProvider}. Please sign in with ${otherProvider}.`;
-              toastDuration = 10000;
-            } else if (msg.includes("sign in with your password")) {
-              errorTitle = "Email Already Registered";
-              const pName =
-                provider.charAt(0).toUpperCase() + provider.slice(1);
-              errorMessage = `This email already has a password account. Please sign in with your email and password, not ${pName}.`;
-              toastDuration = 10000;
-            } else {
-              errorTitle = "Authentication Error";
-              errorMessage =
-                msg ||
-                "There's an issue with your account. Please contact support.";
-            }
-          } else {
-            errorMessage = msg || errorMessage;
-          }
-        } catch {
-          // keep default message
-        }
-
-        toast.error(errorTitle, {
-          description: errorMessage,
-          className: "bg-red-50 text-red-800 border-red-200",
-          duration: toastDuration,
-        });
-        await oauthService.signOut().catch(() => {});
-        return;
-      }
-
-      const responseData = await response.json();
-      if (responseData.success && responseData.data) {
-        const { accessToken, refreshToken, ...userData } = responseData.data;
-        setAuthToken(accessToken, refreshToken);
-        updateUser(userData);
-        toast.success(
-          `Signed in with ${provider === "google" ? "Google" : "GitHub"}!`,
-        );
-        onSuccess?.();
+      // Triggers a full-page redirect to the provider on success — this
+      // promise only resolves/rejects before that navigation happens.
+      if (provider === "google") {
+        await oauthService.signInWithGoogle();
       } else {
-        throw new Error(responseData.message || "OAuth verification failed");
+        await oauthService.signInWithGitHub();
       }
-    } catch (err: any) {
-      // Only show a toast if oauthService didn't already (it shows its own toast for Firebase errors)
-      const msg: string = err?.message || "";
-      if (msg && msg !== "OAuth returned null") {
-        toast.error("Sign in failed", {
-          description: msg,
-          className: "bg-red-50 text-red-800 border-red-200",
-          duration: 7000,
-        });
-      }
-      await oauthService.signOut().catch(() => {});
-    } finally {
+    } catch (err) {
+      const msg =
+        err instanceof Error ? err.message : `Failed to sign in with ${provider}`;
+      toast.error("Sign in failed", {
+        description: msg,
+        className: "bg-red-50 text-red-800 border-red-200",
+        duration: 7000,
+      });
       setLoading(false);
     }
   };
@@ -414,8 +332,9 @@ const AuthSidebar = () => {
     </div>
   );
 
-  // ── OAuth section with stagger ─────────────────────────────────────────────
-  const OAuthSection = ({ context }: { context: "login" | "register" }) => (
+  // ── OAuth section with stagger — disabled for now, Google/GitHub not needed for ordering ──
+  const OAuthSection = (_props: { context: "login" | "register" }) => null;
+  /* const OAuthSectionOriginal = ({ context }: { context: "login" | "register" }) => (
     <motion.div
       variants={staggerContainer}
       initial="hidden"
@@ -423,18 +342,10 @@ const AuthSidebar = () => {
       className="flex flex-col gap-3"
     >
       <motion.div variants={itemSlide}>
-        <SidebarOAuthBtn
-          provider="google"
-          disabled={isLoading}
-          onSuccess={close}
-        />
+        <SidebarOAuthBtn provider="google" disabled={isLoading} />
       </motion.div>
       <motion.div variants={itemSlide}>
-        <SidebarOAuthBtn
-          provider="github"
-          disabled={isLoading}
-          onSuccess={close}
-        />
+        <SidebarOAuthBtn provider="github" disabled={isLoading} />
       </motion.div>
       <motion.div variants={itemSlide}>
         <Divider
@@ -446,7 +357,7 @@ const AuthSidebar = () => {
         />
       </motion.div>
     </motion.div>
-  );
+  ); */
 
   // ── View animation wrapper ─────────────────────────────────────────────────
   const ViewWrap = ({ children }: { children: React.ReactNode }) => (

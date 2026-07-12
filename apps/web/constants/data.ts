@@ -10,9 +10,9 @@ const topHelpCenter = [
 export const bottomHeaderNavList = [
   { title: "Home", href: "/" },
   { title: "Shop", href: "/shop" },
-  { title: "Features", href: "/features" },
-  { title: "New Arrivals", href: "/new-arrivals" },
-  { title: "Blogs", href: "/blogs" },
+  // { title: "Features", href: "/features" }, // hidden per request
+  { title: "New Arrivals", href: "/shop" },
+  // { title: "Blogs", href: "/blogs" }, // hidden per request
   { title: "About Us", href: "/about" },
   { title: "Contact Us", href: "/contact" },
 ];

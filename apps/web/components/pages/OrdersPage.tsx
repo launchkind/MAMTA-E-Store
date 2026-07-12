@@ -37,12 +37,6 @@ import {
   Order,
 } from "@/lib/orderApi";
 import { OrderTableSkeleton } from "@/components/skeleton/OrderSkeleton";
-import PaymentGatewayDialog from "@/components/shared/PaymentGatewayDialog";
-import {
-  createCheckoutSession,
-  redirectToCheckout,
-  type CashfreeCheckoutItem,
-} from "@/lib/cashfree";
 
 /* ── helpers ── */
 const STATUS_CONFIG: Record<
@@ -177,13 +171,7 @@ const OrdersPageContent = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [authLoading, setAuthLoading] = useState(true);
-  const [showPaymentConfirm, setShowPaymentConfirm] = useState(false);
-  const [processingPayment, setProcessingPayment] = useState(false);
-  const [orderToPay, setOrderToPay] = useState<Order | null>(null);
   const [deletingOrder, setDeletingOrder] = useState<string | null>(null);
-  const [paymentGateway, setPaymentGateway] = useState<
-    "cashfree" | "sslcommerz" | null
-  >(null);
   const [activeTab, setActiveTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -260,97 +248,6 @@ const OrdersPageContent = () => {
       toast.error("Failed to delete order");
     } finally {
       setDeletingOrder(null);
-    }
-  };
-
-  const calculateShipping = (order: Order) => {
-    const sub = order.items.reduce((a, i) => a + i.price * i.quantity, 0);
-    return sub >
-      parseFloat(process.env.NEXT_PUBLIC_FREE_DELIVERY_THRESHOLD || "999")
-      ? 0
-      : 15;
-  };
-
-  const calculateTax = (order: Order) => {
-    const sub = order.items.reduce((a, i) => a + i.price * i.quantity, 0);
-    return sub * parseFloat(process.env.NEXT_PUBLIC_TAX_AMOUNT || "0");
-  };
-
-  const processPayment = async (gateway: "cashfree" | "sslcommerz") => {
-    if (!orderToPay || !authUser) return;
-    setShowPaymentConfirm(false);
-    setProcessingPayment(true);
-    try {
-      if (gateway === "sslcommerz") {
-        const apiUrl =
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-        const base = apiUrl.endsWith("/api") ? apiUrl : `${apiUrl}/api`;
-        const res = await fetch(`${base}/payments/sslcommerz/init`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${auth_token}`,
-          },
-          body: JSON.stringify({
-            orderId: orderToPay._id,
-            amount: orderToPay.total,
-            currency: "BDT",
-          }),
-        });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        if (data.success && data.gatewayUrl)
-          window.location.href = data.gatewayUrl;
-        else throw new Error(data.message || "SSLCommerz init failed");
-        return;
-      }
-      const cashfreeItems: CashfreeCheckoutItem[] = orderToPay.items.map((i) => ({
-        name: i.name,
-        description: `Quantity: ${i.quantity}`,
-        amount: Math.round(i.price * 100),
-        currency: "inr",
-        quantity: i.quantity,
-        images: i.image ? [i.image] : undefined,
-      }));
-      const ship = calculateShipping(orderToPay);
-      const tax = calculateTax(orderToPay);
-      if (ship > 0)
-        cashfreeItems.push({
-          name: "Shipping",
-          description: "Standard shipping",
-          amount: Math.round(ship * 100),
-          currency: "inr",
-          quantity: 1,
-        });
-      if (tax > 0)
-        cashfreeItems.push({
-          name: "Tax",
-          description: "Sales tax",
-          amount: Math.round(tax * 100),
-          currency: "inr",
-          quantity: 1,
-        });
-      const result = await createCheckoutSession({
-        items: cashfreeItems,
-        customerEmail: authUser?.email,
-        customerName: authUser?.name,
-        successUrl: `${window.location.origin}/user/orders/${orderToPay._id}?success=true`,
-        cancelUrl: `${window.location.origin}/user/orders`,
-        metadata: {
-          orderId: orderToPay._id,
-          shippingAddress: JSON.stringify(orderToPay.shippingAddress),
-        },
-      });
-      if ("paymentSessionId" in result && result.paymentSessionId)
-        await redirectToCheckout(result.paymentSessionId);
-      else if ("error" in result) throw new Error(result.error);
-      else throw new Error("No payment session");
-    } catch (err) {
-      console.error(err);
-      toast.error("Payment failed. Please try again.");
-    } finally {
-      setProcessingPayment(false);
-      setOrderToPay(null);
     }
   };
 
@@ -579,17 +476,6 @@ const OrdersPageContent = () => {
                           >
                             {payment.label}
                           </Badge>
-                          {order.paymentStatus !== "paid" && (
-                            <button
-                              onClick={() => {
-                                setOrderToPay(order);
-                                setShowPaymentConfirm(true);
-                              }}
-                              className="block mt-1.5 text-[11px] underline text-primary hover:text-primary/80 font-medium"
-                            >
-                              Pay Now
-                            </button>
-                          )}
                         </TableCell>
                         <TableCell>
                           <Badge
@@ -620,20 +506,6 @@ const OrdersPageContent = () => {
           </div>
         )}
       </div>
-
-      <PaymentGatewayDialog
-        isOpen={showPaymentConfirm}
-        onClose={() => {
-          setShowPaymentConfirm(false);
-          setOrderToPay(null);
-          setPaymentGateway(null);
-        }}
-        orderTotal={orderToPay?.total || 0}
-        selectedGateway={paymentGateway}
-        onGatewaySelect={setPaymentGateway}
-        onConfirm={processPayment}
-        isProcessing={processingPayment}
-      />
     </div>
   );
 };

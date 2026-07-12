@@ -41,7 +41,7 @@ const StickyHeader = ({ logoUrl, baseConfig }: StickyHeaderProps) => {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -100, opacity: 0 }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
-          className="fixed top-0 left-0 right-0 z-50 bg-primary backdrop-blur-md border-b shadow-sm"
+          className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-neutral-800 to-black backdrop-blur-md border-b shadow-sm"
         >
           <Container className="flex items-center justify-between gap-10 py-3">
             <div className="flex flex-1 items-center gap-5">

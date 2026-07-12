@@ -24,17 +24,17 @@ const ContactPage = () => {
     {
       icon: <MapPin className="h-6 w-6 text-primary" />,
       title: "Our Location",
-      details: ["123 Commerce Avenue", "Suite 400", "New York, NY 10001"],
+      details: ["Mamta Complex, Churipatty Road", "Islampur, West Bengal"],
     },
     {
       icon: <Phone className="h-6 w-6 text-primary" />,
       title: "Phone Number",
-      details: ["+1 (555) 123-4567", "+1 (555) 987-6543 (Support)"],
+      details: ["+91 70013 46162"],
     },
     {
       icon: <Mail className="h-6 w-6 text-primary" />,
       title: "Email Address",
-      details: ["support@entry-ecommerce.com", "info@entry-ecommerce.com"],
+      details: ["mamtaestore@gmail.com"],
     },
     {
       icon: <Clock className="h-6 w-6 text-primary" />,
@@ -114,11 +114,35 @@ const ContactPage = () => {
                     {info.title}
                   </h3>
                   <div className="space-y-1">
-                    {info.details.map((detail, i) => (
-                      <p key={i} className="text-muted-foreground text-sm">
-                        {detail}
-                      </p>
-                    ))}
+                    {info.details.map((detail, i) => {
+                      if (info.title === "Phone Number") {
+                        return (
+                          <a
+                            key={i}
+                            href="tel:+917001346162"
+                            className="block text-muted-foreground text-sm hover:text-primary transition-colors"
+                          >
+                            {detail}
+                          </a>
+                        );
+                      }
+                      if (info.title === "Email Address") {
+                        return (
+                          <a
+                            key={i}
+                            href="mailto:mamtaestore@gmail.com"
+                            className="block text-muted-foreground text-sm hover:text-primary transition-colors"
+                          >
+                            {detail}
+                          </a>
+                        );
+                      }
+                      return (
+                        <p key={i} className="text-muted-foreground text-sm">
+                          {detail}
+                        </p>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -239,23 +263,28 @@ const ContactPage = () => {
           </div>
         </div>
 
-        {/* Google Maps placeholder - Full Width */}
-        <div className="mt-12 bg-gray-200 w-full h-[400px] rounded-xl overflow-hidden relative group shadow-sm border border-border/60">
+        {/* Google Maps - Full Width */}
+        <a
+          href="https://www.google.com/maps/place/Mamta+E-Store+%7C+Mobile+Dealer+%7C+Television+Dealer+In+Islampur/@26.2583576,88.1863218,17z/data=!3m1!4b1!4m6!3m5!1s0x39e4fd0ce8264c25:0xd436bae815992a35!8m2!3d26.2583576!4d88.1888967!16s%2Fg%2F11f08q88b3?entry=ttu&g_ep=EgoyMDI2MDcwNy4wIKXMDSoASAFQAw%3D%3D"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-12 bg-gray-200 w-full h-[400px] rounded-xl overflow-hidden relative group shadow-sm border border-border/60 block"
+        >
           <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
             <Button
               variant="secondary"
               size="lg"
-              className="gap-2 shadow-lg hover:scale-105 transition-transform"
+              className="gap-2 shadow-lg hover:scale-105 transition-transform pointer-events-none"
             >
               <MapPin className="w-5 h-5" /> Open in Google Maps
             </Button>
           </div>
           <img
             src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=1600&auto=format&fit=crop"
-            alt="Entry Ecommerce HQ Map Location"
+            alt="Mamta-e-shop Location"
             className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 grayscale opacity-80"
           />
-        </div>
+        </a>
       </Container>
     </div>
   );

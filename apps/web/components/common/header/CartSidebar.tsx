@@ -7,11 +7,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useCartStore, useUserStore } from "@/lib/store";
 import { useCartSidebarStore } from "@/lib/useCartSidebarStore";
@@ -32,7 +27,7 @@ import {
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { processDirectCheckout } from "@/lib/checkoutDirect";
+import { redirectToWhatsAppOrder } from "@/lib/whatsappOrder";
 
 // ──────────────────────────────────────────────────────────────────────────────
 
@@ -48,7 +43,6 @@ export default function CartSidebar() {
   } = useCartStore();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [removingId, setRemovingId] = useState<string | null>(null);
 
   // Load cart when sidebar opens
@@ -98,31 +92,21 @@ export default function CartSidebar() {
     }
   };
 
-  const handleCheckout = async () => {
+  const handleCheckout = () => {
     if (!isAuthenticated || !auth_token) {
       toast.error("Please sign in to checkout");
       return;
     }
 
-    const userProfile = useUserStore.getState().authUser;
-
-    await processDirectCheckout(
-      userProfile,
-      auth_token,
-      cartItemsWithQuantities,
-      {
-        onStart: () => setIsCheckingOut(true),
-        onSuccess: () => {
-          toast.success("Redirecting to secure gateway...");
-          close();
-          setIsCheckingOut(false);
-        },
-        onError: (message) => {
-          toast.error(message);
-          setIsCheckingOut(false);
-        },
-      }
+    redirectToWhatsAppOrder(
+      cartItemsWithQuantities.map((item) => ({
+        name: item.product.name,
+        price: item.product.price,
+        quantity: item.quantity,
+        product: { _id: item.product._id, slug: item.product.slug },
+      }))
     );
+    close();
   };
 
   // ── Progress bar toward free shipping ────────────────────────────────────
@@ -374,16 +358,11 @@ export default function CartSidebar() {
 
             {/* Actions */}
             <Button
-              className="w-full h-11 rounded-lg font-semibold mt-1"
+              className="w-full h-11 rounded-lg font-semibold mt-1 bg-[#25D366] hover:bg-[#1ebe57] text-white"
               onClick={handleCheckout}
-              disabled={isCheckingOut}
             >
-              {isCheckingOut ? (
-                <Loader2 className="size-4 animate-spin mr-2" />
-              ) : (
-                <ArrowRight className="size-4 mr-2" />
-              )}
-              Checkout
+              <ArrowRight className="size-4 mr-2" />
+              Order via WhatsApp
             </Button>
 
             <Link href="/user/cart" onClick={close}>
@@ -397,20 +376,6 @@ export default function CartSidebar() {
           </div>
         )}
       </SheetContent>
-
-      <Dialog open={isCheckingOut}>
-        <DialogContent className="sm:max-w-md [&>button]:hidden flex flex-col items-center justify-center p-8 z-[100]" aria-describedby={undefined}>
-          <DialogTitle className="hidden">Processing Order</DialogTitle>
-          <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mb-6">
-            <Loader2 className="w-8 h-8 text-accent animate-spin" />
-          </div>
-          <h2 className="text-xl font-bold text-foreground mb-3 text-center">Processing Your Order</h2>
-          <p className="text-sm text-muted-foreground text-center px-4 leading-relaxed">
-            Please wait while we secure your items and prepare your secure checkout. <br/>
-            <span className="font-medium text-foreground">Do not close this window.</span>
-          </p>
-        </DialogContent>
-      </Dialog>
     </Sheet>
   );
 }

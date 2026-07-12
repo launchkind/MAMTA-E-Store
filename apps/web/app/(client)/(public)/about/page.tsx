@@ -2,6 +2,7 @@ import React from "react";
 import Container from "@/components/common/Container";
 import { Title } from "@/components/common/text";
 import PageBreadcrumb from "@/components/common/PageBreadcrumb";
+import { Phone, MapPin, Store } from "lucide-react";
 
 const AboutPage = () => {
   return (
@@ -107,6 +108,42 @@ const AboutPage = () => {
                 merchants who share our core values of customer transparency and
                 ethical business practices.
               </p>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-semibold mb-4 text-primary">
+                Visit Our Store
+              </h2>
+              <div className="grid sm:grid-cols-3 gap-6">
+                <div className="flex items-start gap-3">
+                  <Store className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="font-semibold">Store Name</h3>
+                    <p className="text-gray-600 text-sm">Mamta-e-shop</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Phone className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="font-semibold">Phone</h3>
+                    <a
+                      href="tel:+917001346162"
+                      className="text-gray-600 text-sm hover:text-primary transition-colors"
+                    >
+                      +91 70013 46162
+                    </a>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <MapPin className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="font-semibold">Location</h3>
+                    <p className="text-gray-600 text-sm">
+                      Mamta Complex, Churipatty Road, Islampur, West Bengal
+                    </p>
+                  </div>
+                </div>
+              </div>
             </section>
           </div>
         </div>

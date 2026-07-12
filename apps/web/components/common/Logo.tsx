@@ -16,10 +16,9 @@ const Logo = ({
       <Image
         src={logoUrl || logo}
         alt="logo"
-        className={cn("w-32 lg:w-44", className)}
-        width={176}
-        height={40}
-        style={{ width: "auto", height: "auto" }}
+        className={cn("w-48 lg:w-64 h-auto", className)}
+        width={256}
+        height={58}
         priority
       />
     </Link>

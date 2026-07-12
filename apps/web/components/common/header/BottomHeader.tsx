@@ -10,7 +10,6 @@ import { cn } from "@/lib/utils";
 import { useState, useRef, useEffect } from "react";
 import { Category } from "@entry/types";
 import CategorySidebar from "../CategorySidebar";
-import { ChevronDown } from "lucide-react";
 
 interface BottomHeaderProps {
   config?: {
@@ -23,9 +22,7 @@ interface BottomHeaderProps {
 
 const BottomHeader = ({ config, categories }: BottomHeaderProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isPremiumOpen, setIsPremiumOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const premiumRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -34,12 +31,6 @@ const BottomHeader = ({ config, categories }: BottomHeaderProps) => {
         !containerRef.current.contains(event.target as Node)
       ) {
         setIsOpen(false);
-      }
-      if (
-        premiumRef.current &&
-        !premiumRef.current.contains(event.target as Node)
-      ) {
-        setIsPremiumOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -77,6 +68,10 @@ const BottomHeader = ({ config, categories }: BottomHeaderProps) => {
               <div
                 className={cn(
                   "absolute top-full left-0 z-50 w-full animate-in fade-in zoom-in-95 duration-200",
+                  // On the home page the category sidebar is already permanently
+                  // visible (in the banner) at lg+ screens, so don't show a
+                  // duplicate hover popup there — only show it when that
+                  // persistent sidebar is hidden (i.e. below lg, or on other pages).
                   pathname === "/" && "lg:hidden",
                 )}
               >
@@ -105,106 +100,11 @@ const BottomHeader = ({ config, categories }: BottomHeaderProps) => {
               </Link>
             ))}
 
-            {/* Premium Pages Dropdown */}
-            <div 
-              className="relative z-50 py-2" 
-              ref={premiumRef}
-              onMouseEnter={() => setIsPremiumOpen(true)}
-              onMouseLeave={() => setIsPremiumOpen(false)}
-            >
-              <button
-                className={cn(
-                  "flex items-center gap-1 text-sm lg:text-base font-semibold text-primary-foreground/90 hover:text-accent hoverEffect",
-                  isPremiumOpen && "text-accent"
-                )}
-              >
-                Premium Pages
-                <ChevronDown
-                  className={cn(
-                    "w-4 h-4 transition-transform duration-200",
-                    isPremiumOpen && "rotate-180"
-                  )}
-                />
-              </button>
-              
-              <div
-                className={cn(
-                  "absolute top-[calc(100%-8px)] right-0 mt-2 w-56 rounded-xl border border-border bg-background shadow-2xl overflow-hidden transition-all duration-200 origin-top-right",
-                  isPremiumOpen
-                    ? "opacity-100 scale-100 translate-y-0"
-                    : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
-                )}
-              >
-                <div className="p-2 space-y-1">
-                  <Link
-                    href="/seller"
-                    className="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg hover:bg-accent hover:text-white transition-colors text-foreground"
-                  >
-                    Vendor Dashboard
-                  </Link>
-                  <Link
-                    href="/compare"
-                    className="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg hover:bg-accent hover:text-white transition-colors text-foreground"
-                  >
-                    Compare Products
-                  </Link>
-                  <Link
-                    href="/wishlist"
-                    className="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg hover:bg-accent hover:text-white transition-colors text-foreground"
-                  >
-                    My Wishlist
-                  </Link>
-                  <Link
-                    href="/features"
-                    className="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg hover:bg-accent hover:text-white transition-colors text-foreground"
-                  >
-                    Featured Collections
-                  </Link>
-                  <Link
-                    href="/new-arrivals"
-                    className="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg hover:bg-accent hover:text-white transition-colors text-foreground"
-                  >
-                    New Arrivals
-                  </Link>
-                  <Link
-                    href="/returns"
-                    className="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg hover:bg-accent hover:text-white transition-colors text-foreground"
-                  >
-                    Returns & Exchanges
-                  </Link>
-                  <Link
-                    href="/user/orders/demo-order-123"
-                    className="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg hover:bg-accent hover:text-white transition-colors text-foreground"
-                  >
-                    Order Tracking Details
-                  </Link>
-                  <Link
-                    href="/shop"
-                    className="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg hover:bg-accent hover:text-white transition-colors text-foreground"
-                  >
-                    Product Reviews
-                  </Link>
-                  <Link
-                    href="/user/analytics"
-                    className="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg hover:bg-accent hover:text-white transition-colors text-foreground"
-                  >
-                    User Analytics
-                  </Link>
-                  <Link
-                    href="/user/notifications"
-                    className="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg hover:bg-accent hover:text-white transition-colors text-foreground"
-                  >
-                    User Notifications
-                  </Link>
-                  <Link
-                    href="/become-seller"
-                    className="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg hover:bg-accent hover:text-white transition-colors text-foreground"
-                  >
-                    Become a Seller
-                  </Link>
-                </div>
-              </div>
+            {/* Premium Pages dropdown — hidden per request
+            <div className="relative z-50 py-2">
+              ...
             </div>
+            */}
           </div>
         )}
       </Container>

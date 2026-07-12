@@ -8,7 +8,7 @@ import SelectLanguage from "./SelectLanguage";
 
 const TopBanner = () => {
   return (
-    <div className="w-full bg-primary text-primary-foreground py-2 text-sm font-medium border-b border-b-border/20">
+    <div className="w-full bg-gradient-to-b from-neutral-800 to-black text-primary-foreground py-2 text-sm font-medium border-b border-b-border/20">
       <Container className="flex items-center justify-between">
         <p className="text-center">
           Black Friday Shopping{" "}

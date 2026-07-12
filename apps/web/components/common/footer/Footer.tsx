@@ -61,7 +61,7 @@ const Footer = () => {
     <footer className="w-full flex flex-col">
       {/* Dark Footer Wrapper */}
       <TopFooter />
-      <div className="w-full bg-[#1a1a2c] text-white">
+      <div className="w-full bg-gradient-to-b from-neutral-800 to-black text-white">
         <HrLine className="border-white/10" />
 
         {/* FooterMiddle */}

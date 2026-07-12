@@ -302,12 +302,22 @@ export const useUserStore = create<UserState>()(
           // Fetch user profile from users table
           const { data: userProfile } = await supabase
             .from("users")
-            .select("id, name, email, role, avatar")
+            .select("id, name, email, role, avatar, auth_provider, has_set_password")
             .eq("id", session.user.id)
             .single();
 
           const authUser = userProfile
-            ? { _id: userProfile.id, name: userProfile.name, email: userProfile.email, role: userProfile.role, image: userProfile.avatar } as unknown as User
+            ? {
+                _id: userProfile.id,
+                name: userProfile.name,
+                email: userProfile.email,
+                role: userProfile.role,
+                image: userProfile.avatar,
+                avatar: userProfile.avatar,
+                authProvider: userProfile.auth_provider,
+                isOAuthUser: userProfile.auth_provider !== "local",
+                hasSetPassword: userProfile.has_set_password,
+              } as unknown as User
             : null;
 
           set({ authUser, isAuthenticated: true, auth_token: token, refresh_token: session.refresh_token });

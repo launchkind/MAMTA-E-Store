@@ -41,7 +41,7 @@ export default function ConsoleProtection() {
       "color: #f59e0b; font-size: 14px; font-weight: 600; padding: 8px 0;",
     );
     originalConsole.log(
-      "%cNeed help? Contact: support@entry.reactbd.com",
+      "%cNeed help? Contact: mamtaestore@gmail.com",
       "color: #6b7280; font-size: 13px; padding: 4px 0;",
     );
 

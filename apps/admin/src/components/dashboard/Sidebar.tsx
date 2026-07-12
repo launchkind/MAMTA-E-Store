@@ -169,7 +169,7 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
   const sidebarContent = (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 h-16 bg-[#1a1a2c] lg:bg-transparent border-b border-white/5 lg:border-none shadow-sm lg:shadow-none shrink-0 relative mt-2">
+      <div className="flex items-center justify-between p-4 h-16 border-b border-white/5 lg:border-none shadow-sm lg:shadow-none shrink-0 relative mt-2">
         <AnimatePresence mode="wait">
           {open && (
             <motion.span
@@ -205,7 +205,7 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
       </div>
 
       {/* Navigation */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar p-3 bg-[#1a1a2c] text-white">
+      <div className="flex-1 overflow-y-auto custom-scrollbar p-3 text-white">
         {/* Collapse All Button */}
         {expandedCount > 1 && (
           <motion.div
@@ -239,7 +239,7 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
       </div>
 
       {/* Footer */}
-      <div className="p-4 border-t border-white/10 bg-[#1a1a2c] shrink-0">
+      <div className="p-4 border-t border-white/10 shrink-0">
         <motion.div
           className={cn(
             "flex items-center gap-3 mb-3 p-2.5 rounded-xl bg-white/5 border border-white/10",
@@ -338,7 +338,7 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
 
       {/* Desktop Sidebar */}
       <motion.aside
-        className="hidden lg:flex fixed inset-y-0 left-0 z-20 flex-col bg-[#1a1a2c] shadow-xl"
+        className="hidden lg:flex fixed inset-y-0 left-0 z-20 flex-col bg-linear-to-b from-neutral-800 to-black shadow-xl"
         initial={false}
         animate={{
           width: open ? 288 : 80,
@@ -354,7 +354,7 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
 
       {/* Mobile Sidebar - Using shadcn Sheet */}
       <Sheet open={open && isMobile} onOpenChange={setOpen}>
-        <SheetContent side="left" className="p-0 w-72 border-r-0 bg-[#1a1a2c]">
+        <SheetContent side="left" className="p-0 w-72 border-r-0 bg-linear-to-b from-neutral-800 to-black">
           {sidebarContent}
         </SheetContent>
       </Sheet>

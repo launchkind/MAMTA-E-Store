@@ -50,7 +50,7 @@ const LeftSideBar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         ref={sidebarRef}
         className="min-w-72 max-w-96 bg-background text-foreground z-50 h-screen border-r border-r-tech_orange flex flex-col gap-6 relative"
       >
-        <div className="flex items-center justify-between border-b pb-4 p-5 bg-primary">
+        <div className="flex items-center justify-between border-b pb-4 p-5 bg-gradient-to-b from-neutral-800 to-black">
           <Logo />
         </div>
         <div className="flex flex-col justify-between flex-1 px-5 overflow-hidden">

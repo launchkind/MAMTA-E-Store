@@ -35,7 +35,7 @@ const FeaturedCategoriesCarousel = ({
           </h2>
         </div>
 
-        <div className="px-5 py-6 pb-10 relative">
+        <div className="px-5 sm:px-12 py-6 pb-10 relative">
           <CarouselContent className="-ml-2 md:-ml-4">
             {categories.map((category) => (
               <CarouselItem
@@ -71,10 +71,10 @@ const FeaturedCategoriesCarousel = ({
             ))}
           </CarouselContent>
           {categories.length > 2 && (
-            <div className="hidden group-hover:flex ">
-              <CarouselPrevious className="absolute left-0 top-24" />
-              <CarouselNext className="absolute right-0 top-24" />
-            </div>
+            <>
+              <CarouselPrevious className="flex left-0 sm:left-2" />
+              <CarouselNext className="flex right-0 sm:right-2" />
+            </>
           )}
         </div>
       </Carousel>

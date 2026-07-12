@@ -20,7 +20,6 @@ import Image from "next/image";
 import { toast } from "sonner";
 import { getOrderById, type Order } from "@/lib/orderApi";
 import { useUserStore, useCartStore } from "@/lib/store";
-import { pollOrderStatus } from "@/lib/paymentUtils";
 import PriceFormatter from "@/components/common/PriceFormatter";
 import Cookies from "js-cookie";
 import Container from "@/components/common/Container";
@@ -116,7 +115,6 @@ const SuccessPageContent = ({
   const [order, setOrder] = useState<Order | null>(initialOrder);
   const [loading, setLoading] = useState(!initialOrder); // skip loading if server gave us data
   const [authLoading, setAuthLoading] = useState(!initialOrder);
-  const [statusUpdated, setStatusUpdated] = useState(false);
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -189,33 +187,6 @@ const SuccessPageContent = ({
       clearCart();
     }
   }, [initialOrder]);
-
-  // Poll for the webhook-confirmed payment status. Cashfree redirects back
-  // to this page regardless of whether the payment succeeded or failed, so
-  // the outcome can only be trusted once payment_status is updated server-side.
-  useEffect(() => {
-    if (!order || statusUpdated || order.paymentStatus !== "pending") return;
-    const token = Cookies.get("auth_token") || auth_token;
-    if (!token || !orderId) return;
-
-    const poll = async () => {
-      try {
-        const result = await pollOrderStatus(orderId, token, "paid", 6, 5000);
-        if (result.success && result.order) {
-          setOrder(result.order);
-          setStatusUpdated(true);
-          toast.success("Payment status updated!");
-        } else if (result.order?.paymentStatus === "failed") {
-          setOrder(result.order);
-          setStatusUpdated(true);
-          toast.error("Payment failed. Please try again.");
-        }
-      } catch (e) {
-        console.error("Polling error:", e);
-      }
-    };
-    poll();
-  }, [order, statusUpdated, orderId, auth_token]);
 
   if (loading || authLoading) return <SuccessPageSkeleton />;
 

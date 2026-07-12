@@ -16,19 +16,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@/components/ui/dialog";
-
 import PriceFormatter from "@/components/common/PriceFormatter";
 import { ArrowLeft, Loader2, Minus, Plus, ShoppingCart, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { processDirectCheckout } from "@/lib/checkoutDirect";
+import { redirectToWhatsAppOrder } from "@/lib/whatsappOrder";
 import { Checkbox } from "@/components/ui/checkbox";
 import { getProductUrl } from "@/lib/productHelpers";
 
@@ -47,7 +41,6 @@ const CartPageClient = () => {
   const [showClearDialog, setShowClearDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
   const [hasInitializedSelection, setHasInitializedSelection] = useState(false);
   const router = useRouter();
@@ -205,45 +198,29 @@ const CartPageClient = () => {
     }
   };
 
-  const handleCheckout = async () => {
+  const handleCheckout = () => {
     if (selectedItems.size === 0) {
       toast.error("Please select at least one item to checkout");
       return;
     }
 
     try {
-      if (!auth_token) {
-        toast.error("You must be logged in to place an order.");
-        return;
-      }
-
       // Filter cart items to only include selected ones
       const selectedCartItems = cartItemsWithQuantities.filter((item) =>
         selectedItems.has(item.product._id)
       );
 
-      const userProfile = useUserStore.getState().authUser;
-
-      await processDirectCheckout(
-        userProfile,
-        auth_token,
-        selectedCartItems,
-        {
-          onStart: () => setIsCheckingOut(true),
-          onSuccess: () => {
-            toast.success("Redirecting to secure gateway...");
-            setIsCheckingOut(false);
-          },
-          onError: (message) => {
-            toast.error(message);
-            setIsCheckingOut(false);
-          },
-        }
+      redirectToWhatsAppOrder(
+        selectedCartItems.map((item) => ({
+          name: item.product.name,
+          price: item.product.price,
+          quantity: item.quantity,
+          product: { _id: item.product._id, slug: item.product.slug },
+        }))
       );
     } catch (error) {
-      console.error("Error creating direct checkout:", error);
-      toast.error("Failed to process checkout. Please try again.");
-      setIsCheckingOut(false);
+      console.error("Error redirecting to WhatsApp:", error);
+      toast.error("Failed to open WhatsApp. Please try again.");
     }
   };
 
@@ -851,24 +828,17 @@ const CartPageClient = () => {
             <Button
               size="lg"
               onClick={handleCheckout}
-              disabled={isCheckingOut || selectedItems.size === 0}
-              className="w-full mt-6 bg-black hover:bg-gray-800 text-white rounded-full py-3 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={selectedItems.size === 0}
+              className="w-full mt-6 bg-[#25D366] hover:bg-[#1ebe57] text-white rounded-full py-3 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isCheckingOut ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                  Creating Order...
-                </>
-              ) : selectedItems.size === 0 ? (
-                "Select items to checkout"
-              ) : (
-                `Proceed to checkout (${selectedItems.size} ${selectedItems.size === 1 ? "item" : "items"})`
-              )}
+              {selectedItems.size === 0
+                ? "Select items to order"
+                : `Order via WhatsApp (${selectedItems.size} ${selectedItems.size === 1 ? "item" : "items"})`}
             </Button>
 
             <div className="mt-4 text-center">
               <p className="text-xs text-gray-500">
-                Secure checkout • SSL encrypted
+                You&apos;ll be redirected to WhatsApp to confirm your order
               </p>
             </div>
           </div>
@@ -896,21 +866,6 @@ const CartPageClient = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
-      {/* Processing Order Modal */}
-      <Dialog open={isCheckingOut}>
-        <DialogContent className="sm:max-w-md [&>button]:hidden flex flex-col items-center justify-center p-8 z-[100]" aria-describedby={undefined}>
-          <DialogTitle className="hidden">Processing Order</DialogTitle>
-          <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mb-6">
-            <Loader2 className="w-8 h-8 text-accent animate-spin" />
-          </div>
-          <h2 className="text-xl font-bold text-foreground mb-3 text-center">Processing Your Order</h2>
-          <p className="text-sm text-muted-foreground text-center px-4 leading-relaxed">
-            Please wait while we secure your items and prepare your secure checkout. <br/>
-            <span className="font-medium text-foreground">Do not close this window.</span>
-          </p>
-        </DialogContent>
-      </Dialog>
     </Container>
   );
 };

@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 const AuthHeader = () => {
   const router = useRouter();
   return (
-    <header className="w-full bg-primary text-primary-foreground">
+    <header className="w-full bg-gradient-to-b from-neutral-800 to-black text-primary-foreground">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <button

@@ -4,7 +4,7 @@ import Container from "../Container";
 
 const TopFooter = () => {
   return (
-    <div className="bg-primary/90">
+    <div className="bg-gradient-to-b from-neutral-800 to-black">
       <Container className="py-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {footerTopData?.map((item) => (
           <div

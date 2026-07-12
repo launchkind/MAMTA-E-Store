@@ -26,7 +26,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { trackProductView } from "@/lib/productApi";
-import { useCartStore } from "@/lib/store";
+import { redirectToWhatsAppOrder } from "@/lib/whatsappOrder";
+import { MessageCircle } from "lucide-react";
 
 interface ProductDetailsClientProps {
   product: Product;
@@ -41,8 +42,7 @@ const ProductDetailsClient: React.FC<ProductDetailsClientProps> = ({
   const [shareOpen, setShareOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [viewCount, setViewCount] = useState(product.viewCount || 0);
-  const [isAddingToCart, setIsAddingToCart] = useState(false);
-  const { addToCart } = useCartStore();
+  const [isOrdering, setIsOrdering] = useState(false);
 
   // Track product view on component mount
   useEffect(() => {
@@ -65,19 +65,19 @@ const ProductDetailsClient: React.FC<ProductDetailsClientProps> = ({
     router.push("/help");
   };
 
-  const handleBuyNow = async () => {
-    setIsAddingToCart(true);
+  const handleOrderViaWhatsApp = () => {
+    setIsOrdering(true);
     try {
-      await addToCart(product, 1);
-      // Store the product ID for Buy Now flow - only this item should be selected
-      sessionStorage.setItem("buyNowProductId", product._id);
-      toast.success("Product added to cart!");
-      router.push("/user/cart");
-    } catch (error) {
-      console.error("Failed to add product to cart:", error);
-      toast.error("Failed to add product to cart. Please try again.");
+      redirectToWhatsAppOrder([
+        {
+          name: product.name,
+          price: discountedPrice,
+          quantity: 1,
+          product: { _id: product._id, slug: product.slug },
+        },
+      ]);
     } finally {
-      setIsAddingToCart(false);
+      setIsOrdering(false);
     }
   };
 
@@ -209,14 +209,15 @@ const ProductDetailsClient: React.FC<ProductDetailsClientProps> = ({
         </p>
       </div>
 
-      {/* Buy Now Button */}
+      {/* Order via WhatsApp Button */}
       <Button
-        onClick={handleBuyNow}
-        disabled={isAddingToCart || !product.stock || product.stock === 0}
+        onClick={handleOrderViaWhatsApp}
+        disabled={isOrdering || !product.stock || product.stock === 0}
         size="lg"
-        className="h-12 w-full text-base font-semibold shadow-md hover:shadow-lg transition-all rounded-xl"
+        className="h-12 w-full text-base font-semibold shadow-md hover:shadow-lg transition-all rounded-xl bg-[#25D366] hover:bg-[#1ebe57] text-white"
       >
-        {isAddingToCart ? "Adding to Cart..." : "Buy Now"}
+        <MessageCircle className="w-5 h-5 mr-2" />
+        {isOrdering ? "Opening WhatsApp..." : "Order via WhatsApp"}
       </Button>
 
       {/* Action Links */}

@@ -21,6 +21,7 @@ interface BaseConfig {
   banner: boolean;
   showAds: boolean;
   showCategoryMenu: boolean;
+  showBecomeSeller: boolean;
   search: {
     enabled: boolean;
     voice: boolean;
@@ -39,6 +40,7 @@ const DEFAULT_CONFIG: BaseConfig = {
   banner: true,
   showAds: true,
   showCategoryMenu: true,
+  showBecomeSeller: true,
   search: { enabled: true, voice: true, image: true },
   revalidationTime: 60,
   bottomHeader: { enabled: true, categoryMenu: true, navList: true },
@@ -80,6 +82,7 @@ export default function BaseConfigPage() {
           banner: ls.banner ?? true,
           showAds: ls.showAds ?? true,
           showCategoryMenu: ls.showCategoryMenu ?? true,
+          showBecomeSeller: ls.showBecomeSeller ?? true,
           search: {
             enabled: ls.search?.enabled ?? true,
             voice: ls.search?.voice ?? true,
@@ -255,6 +258,17 @@ export default function BaseConfigPage() {
                       <p className="text-sm text-muted-foreground">Show product categories as a dedicated menu.</p>
                     </div>
                     <Switch checked={config.showCategoryMenu} onCheckedChange={() => handleToggle("showCategoryMenu")} disabled={saving} className="data-[state=checked]:bg-purple-600" />
+                  </div>
+                </div>
+
+                {/* Become a Seller Banner */}
+                <div className="rounded-lg border p-4 transition-colors hover:bg-slate-50 dark:hover:bg-slate-900/50">
+                  <div className="flex items-center justify-between space-x-4">
+                    <div className="space-y-0.5">
+                      <Label className="text-base font-medium">Become a Seller Banner</Label>
+                      <p className="text-sm text-muted-foreground">Show the "Become a Seller" promo card on the homepage.</p>
+                    </div>
+                    <Switch checked={config.showBecomeSeller} onCheckedChange={() => handleToggle("showBecomeSeller")} disabled={saving} className="data-[state=checked]:bg-purple-600" />
                   </div>
                 </div>
 

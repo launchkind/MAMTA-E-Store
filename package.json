@@ -14,8 +14,6 @@
     "dev:all": "turbo dev --parallel",
     "ios": "turbo run ios --filter=@entry/mobile",
     "android": "turbo run android --filter=@entry/mobile",
-    "webhook:api": "stripe listen --forward-to localhost:8000/api/payment/webhook",
-    "webhook:web": "stripe listen --forward-to localhost:3000/api/stripe-webhook",
     "lint": "turbo lint",
     "test": "turbo test",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",

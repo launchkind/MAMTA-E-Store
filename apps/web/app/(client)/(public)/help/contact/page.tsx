@@ -10,8 +10,8 @@ const ContactPage = () => {
     {
       title: "Phone Support",
       icon: <Phone size={32} />,
-      primary: "1-800-BABYSHOP",
-      secondary: "(1-800-222-9746)",
+      primary: "+91 70013 46162",
+      secondary: "",
       hours: "Monday - Friday: 9:00 AM - 6:00 PM EST",
       weekend: "Saturday: 10:00 AM - 4:00 PM EST",
       description:
@@ -20,7 +20,7 @@ const ContactPage = () => {
     {
       title: "Email Support",
       icon: <Mail size={32} />,
-      primary: "support@babyshop.com",
+      primary: "mamtaestore@gmail.com",
       secondary: "Response within 24 hours",
       hours: "24/7 - We'll get back to you soon",
       description:
@@ -37,12 +37,12 @@ const ContactPage = () => {
   ];
 
   const departments = [
-    { name: "General Support", email: "support@babyshop.com" },
-    { name: "Orders & Shipping", email: "orders@babyshop.com" },
-    { name: "Returns & Exchanges", email: "returns@babyshop.com" },
-    { name: "Product Safety", email: "safety@babyshop.com" },
-    { name: "Business Inquiries", email: "business@babyshop.com" },
-    { name: "Media & Press", email: "press@babyshop.com" },
+    { name: "General Support", email: "mamtaestore@gmail.com" },
+    { name: "Orders & Shipping", email: "mamtaestore@gmail.com" },
+    { name: "Returns & Exchanges", email: "mamtaestore@gmail.com" },
+    { name: "Product Safety", email: "mamtaestore@gmail.com" },
+    { name: "Business Inquiries", email: "mamtaestore@gmail.com" },
+    { name: "Media & Press", email: "mamtaestore@gmail.com" },
   ];
 
   return (
@@ -77,7 +77,9 @@ const ContactPage = () => {
                 <h3 className="font-semibold text-xl mb-3">{method.title}</h3>
                 <div className="space-y-2 mb-4">
                   <div className="font-semibold text-lg">{method.primary}</div>
-                  <div className="text-gray-600">{method.secondary}</div>
+                  {method.secondary && (
+                    <div className="text-gray-600">{method.secondary}</div>
+                  )}
                   <div className="text-sm text-gray-500">{method.hours}</div>
                   {method.weekend && (
                     <div className="text-sm text-gray-500">

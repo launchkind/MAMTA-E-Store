@@ -7,6 +7,7 @@ import ProductTypeSection from "@/components/pages/home/ProductTypeSection";
 import AllProductsSection from "@/components/pages/home/AllProductsSection";
 import FeaturedOffers from "@/components/pages/home/FeaturedOffers";
 import { getSellerConfig } from "@/lib/sellerConfig";
+import { getBaseConfig } from "@/lib/baseConfig";
 import ShopByBrands from "@/components/common/footer/ShopByBrands";
 import { supabase } from "@/lib/supabase";
 import { Metadata } from "next";
@@ -26,7 +27,10 @@ interface ProductType {
 }
 
 export default async function Home() {
-  const sellerConfig = await getSellerConfig();
+  const [sellerConfig, baseConfig] = await Promise.all([
+    getSellerConfig(),
+    getBaseConfig(),
+  ]);
 
   // Fetch product types from Supabase
   let productTypes: ProductType[] = [];
@@ -58,7 +62,13 @@ export default async function Home() {
     <div className="bg-primary-foreground">
       <Container className="min-h-screen flex flex-col md:flex-row gap-3">
         <div className="flex-1 min-w-0">
-          <Banner />
+          {baseConfig.banner && (
+            <Banner
+              showCategoryMenu={
+                baseConfig.sidebar && baseConfig.showCategoryMenu
+              }
+            />
+          )}
 
           <FeaturedCategories />
 
@@ -66,13 +76,15 @@ export default async function Home() {
             <ProductTypeSection key={productType._id} productType={productType} />
           ))}
 
-          <HomeAdvertisement />
+          {baseConfig.showAds && <HomeAdvertisement />}
 
           {middleTwo.map((productType) => (
             <ProductTypeSection key={productType._id} productType={productType} />
           ))}
 
-          <BecomeSeller config={sellerConfig} isVendor={false} />
+          {baseConfig.showBecomeSeller && (
+            <BecomeSeller config={sellerConfig} isVendor={false} />
+          )}
 
           {remaining.map((productType) => (
             <ProductTypeSection key={productType._id} productType={productType} />

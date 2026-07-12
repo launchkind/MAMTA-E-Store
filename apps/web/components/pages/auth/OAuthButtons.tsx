@@ -1,13 +1,11 @@
 "use client";
 
 import { OAuthButton } from "./OAuthButton";
-import { type BackendUserData } from "../../../lib/oauthService";
 
 interface GoogleSignInButtonProps {
   className?: string;
   disabled?: boolean;
   redirectTo?: string;
-  onSuccess?: (userData: BackendUserData) => void;
   onError?: (error: string) => void;
 }
 
@@ -15,7 +13,6 @@ export function GoogleSignInButton({
   className = "",
   disabled = false,
   redirectTo,
-  onSuccess,
   onError,
 }: GoogleSignInButtonProps) {
   return (
@@ -24,7 +21,6 @@ export function GoogleSignInButton({
       className={`border-gray-300 hover:bg-gray-50 hover:text-accent ${className}`}
       disabled={disabled}
       redirectTo={redirectTo}
-      onSuccess={onSuccess}
       onError={onError}
     >
       <div className="flex items-center justify-center w-full">
@@ -60,7 +56,6 @@ interface GitHubSignInButtonProps {
   className?: string;
   disabled?: boolean;
   redirectTo?: string;
-  onSuccess?: (userData: BackendUserData) => void;
   onError?: (error: string) => void;
 }
 
@@ -68,7 +63,6 @@ export function GitHubSignInButton({
   className = "",
   disabled = false,
   redirectTo,
-  onSuccess,
   onError,
 }: GitHubSignInButtonProps) {
   return (
@@ -77,7 +71,6 @@ export function GitHubSignInButton({
       className={`border-gray-300 hover:bg-gray-50 hover:text-accent ${className}`}
       disabled={disabled}
       redirectTo={redirectTo}
-      onSuccess={onSuccess}
       onError={onError}
     >
       <div className="flex items-center justify-center w-full">

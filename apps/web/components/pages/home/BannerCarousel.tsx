@@ -16,6 +16,8 @@ export interface Banner {
   sale?: string;
   value?: string;
   weight?: number;
+  link?: string | null;
+  showButton?: boolean;
 }
 
 interface BannerCarouselProps {
@@ -60,87 +62,111 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
   return (
     <div className="relative w-full h-full overflow-hidden rounded-md bg-gray-100 group">
       <AnimatePresence mode="popLayout">
-        {banners.map(
-          (banner, index) =>
-            index === currentIndex && (
-              <motion.div
-                key={banner._id}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 1 }}
-                className="absolute inset-0 w-full h-full"
-              >
-                <Image
-                  src={banner.image}
-                  alt={banner.name}
-                  fill
-                  priority={index === 0}
-                  className="object-cover w-full h-full rounded-md"
-                />
-                {/* Overlay Content */}
-                {/* <div className="absolute inset-0 bg-black/20" /> */}
+        {banners.map((banner, index) => {
+          if (index !== currentIndex) return null;
 
-                <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center px-10 md:px-16 z-20">
-                  <motion.div
-                    variants={containerVariants}
-                    initial="hidden"
-                    animate="visible"
-                    className="flex flex-col gap-4 items-start max-w-lg"
-                  >
+          const showButton = banner.showButton !== false;
+          const wholeSlideClickable = !showButton && !!banner.link;
+
+          const content = (
+            <>
+              <Image
+                src={banner.image}
+                alt={banner.name || banner.title || "Banner"}
+                fill
+                priority={index === 0}
+                className="object-cover w-full h-full rounded-md"
+              />
+
+              <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center px-10 md:px-16 z-20">
+                <motion.div
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                  className="flex flex-col gap-4 items-start max-w-lg"
+                >
+                  {banner.name && (
                     <motion.p
                       variants={itemVariants}
                       className="font-semibold text-base tracking-wide uppercase text-accent"
                     >
                       {banner.name}
                     </motion.p>
+                  )}
 
+                  {banner.title && (
                     <motion.h2
                       variants={itemVariants}
                       className="text-4xl md:text-5xl font-bold capitalize leading-tight line-clamp-2"
                     >
                       {banner.title}
                     </motion.h2>
+                  )}
 
-                    {banner.sale || banner.value ? (
-                      <motion.div
+                  {banner.sale || banner.value ? (
+                    <motion.div
+                      variants={itemVariants}
+                      className="flex flex-row items-center gap-2 font-medium text-lg"
+                    >
+                      {banner.sale && <span>{banner.sale}</span>}
+                      {banner.value && (
+                        <span className="font-bold text-xl">
+                          {banner.value}
+                        </span>
+                      )}
+                    </motion.div>
+                  ) : (
+                    banner.startFrom > 0 && (
+                      <motion.p
                         variants={itemVariants}
-                        className="flex flex-row items-center gap-2 font-medium text-lg"
+                        className="font-medium text-lg"
                       >
-                        {banner.sale && <span>{banner.sale}</span>}
-                        {banner.value && (
-                          <span className="font-bold text-xl">
-                            {banner.value}
-                          </span>
-                        )}
-                      </motion.div>
-                    ) : (
-                      banner.startFrom > 0 && (
-                        <motion.p
-                          variants={itemVariants}
-                          className="font-medium text-lg"
-                        >
-                          Starting from{" "}
-                          <span className="font-bold text-xl">
-                            ${banner.startFrom}
-                          </span>
-                        </motion.p>
-                      )
-                    )}
+                        Starting from{" "}
+                        <span className="font-bold text-xl">
+                          ${banner.startFrom}
+                        </span>
+                      </motion.p>
+                    )
+                  )}
 
+                  {showButton && (
                     <motion.div variants={itemVariants}>
                       <Link
-                        href={"/shop"}
+                        href={banner.link || "/shop"}
                         className="mt-4 bg-accent-foreground text-black rounded-lg px-8 py-3 border border-transparent hover:border-accent font-semibold hover:bg-accent hover:text-accent-foreground inline-block hoverEffect"
                       >
                         Shop Now
                       </Link>
                     </motion.div>
-                  </motion.div>
-                </div>
-              </motion.div>
-            ),
-        )}
+                  )}
+                </motion.div>
+              </div>
+            </>
+          );
+
+          return (
+            <motion.div
+              key={banner._id}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1 }}
+              className="absolute inset-0 w-full h-full"
+            >
+              {wholeSlideClickable ? (
+                <Link
+                  href={banner.link as string}
+                  className="block relative w-full h-full"
+                  aria-label={banner.title || banner.name || "View banner"}
+                >
+                  {content}
+                </Link>
+              ) : (
+                content
+              )}
+            </motion.div>
+          );
+        })}
       </AnimatePresence>
 
       {/* Dots Navigation */}
