@@ -415,9 +415,6 @@ importers:
       embla-carousel-react:
         specifier: ^8.6.0
         version: 8.6.0(react@19.2.7)
-      firebase:
-        specifier: ^12.10.0
-        version: 12.15.0
       framer-motion:
         specifier: ^12.35.1
         version: 12.42.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
