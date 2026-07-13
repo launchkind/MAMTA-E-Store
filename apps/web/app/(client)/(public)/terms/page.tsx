@@ -27,7 +27,7 @@ const TermsPage = () => {
                 Acceptance of Terms
               </h2>
               <p className="text-gray-700 leading-relaxed">
-                By accessing and using the Babyshop website, you accept and
+                By accessing and using the Mamta E-Store website, you accept and
                 agree to be bound by the terms and provision of this agreement.
                 If you do not agree to abide by the above, please do not use
                 this service.
@@ -40,7 +40,7 @@ const TermsPage = () => {
               </h2>
               <p className="text-gray-700 leading-relaxed mb-4">
                 Permission is granted to temporarily download one copy of the
-                materials on Babyshop&apos;s website for personal,
+                materials on Mamta E-Store&apos;s website for personal,
                 non-commercial transitory viewing only. This is the grant of a
                 license, not a transfer of title, and under this license you may
                 not:
@@ -81,7 +81,7 @@ const TermsPage = () => {
               </h2>
               <div className="space-y-4">
                 <p className="text-gray-700 leading-relaxed">
-                  All prices are listed in USD and are subject to change without
+                  All prices are listed in INR (₹) and are subject to change without
                   notice. We reserve the right to refuse or cancel orders for
                   any reason, including:
                 </p>
@@ -143,7 +143,7 @@ const TermsPage = () => {
                 Limitation of Liability
               </h2>
               <p className="text-gray-700 leading-relaxed">
-                In no event shall Babyshop or its suppliers be liable for any
+                In no event shall Mamta E-Store or its suppliers be liable for any
                 damages (including, without limitation, damages for loss of data
                 or profit, or due to business interruption) arising out of the
                 use or inability to use the materials on this website.
@@ -167,7 +167,7 @@ const TermsPage = () => {
               </h2>
               <p className="text-gray-700 leading-relaxed">
                 These terms and conditions are governed by and construed in
-                accordance with the laws of [Your Jurisdiction] and you
+                accordance with the laws of India and you
                 irrevocably submit to the exclusive jurisdiction of the courts
                 in that state or location.
               </p>
@@ -182,12 +182,12 @@ const TermsPage = () => {
               </p>
               <div className="mt-4 p-4 bg-gray-50 rounded-lg">
                 <p className="text-gray-700">
-                  <strong>Email:</strong> legal@babyshop.com
+                  <strong>Email:</strong> support@mamtastore.com
                   <br />
-                  <strong>Phone:</strong> 1-800-BABYSHOP
+                  <strong>Phone:</strong> +91 70013 46162
                   <br />
-                  <strong>Address:</strong> 123 Baby Street, Child City, BC
-                  12345
+                  <strong>Address:</strong> Mamta Complex, Churipatty Road,
+                  Islampur, West Bengal, India
                 </p>
               </div>
             </section>

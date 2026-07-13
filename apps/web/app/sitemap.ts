@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "http://entry.reactbd.com";
+  const baseUrl = "https://www.mamtaestore.in";
   const currentDate = new Date();
 
   // Static pages

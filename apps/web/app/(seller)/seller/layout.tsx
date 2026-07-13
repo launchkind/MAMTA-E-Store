@@ -1,7 +1,7 @@
 import SellerDashboardLayout from "@/components/seller/SellerDashboardLayout";
 
 export const metadata = {
-  title: "Seller Dashboard - Entry Ecommerce",
+  title: "Seller Dashboard - Mamta E-Store",
   description: "Manage your seller account and products",
 };
 

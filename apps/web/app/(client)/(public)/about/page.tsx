@@ -14,9 +14,9 @@ const AboutPage = () => {
       <Container className="py-10">
         <div className="max-w-4xl mx-auto space-y-8">
           <div className="text-center">
-            <Title className="text-4xl font-bold mb-4">About Entry</Title>
+            <Title className="text-4xl font-bold mb-4">About Mamta E-Store</Title>
             <p className="text-gray-600 text-lg">
-              Your trusted partner for premium products and a seamless online
+              Your trusted partner for premium electronics and a seamless online
               shopping experience
             </p>
           </div>
@@ -27,12 +27,13 @@ const AboutPage = () => {
                 Our Story
               </h2>
               <p className="text-gray-700 leading-relaxed">
-                Founded with a vision to redefine online retail, Entry Ecommerce
-                has been dedicated to connecting customers with high-quality,
-                authentic, and diverse products. We understand that modern
-                shoppers want reliability, speed, and variety, and we&apos;re
-                here to make that possible with our carefully curated selection
-                and powerful multi-vendor platform.
+                Founded with a vision to redefine online electronics retail,
+                Mamta E-Store has been dedicated to connecting customers with
+                high-quality, authentic, and diverse products — from
+                smartphones and laptops to home appliances and audio gear. We
+                understand that modern shoppers want reliability, speed, and
+                variety, and we&apos;re here to make that possible with our
+                carefully curated selection.
               </p>
             </section>
 
@@ -119,7 +120,7 @@ const AboutPage = () => {
                   <Store className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                   <div>
                     <h3 className="font-semibold">Store Name</h3>
-                    <p className="text-gray-600 text-sm">Mamta-e-shop</p>
+                    <p className="text-gray-600 text-sm">Mamta E-Store</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">

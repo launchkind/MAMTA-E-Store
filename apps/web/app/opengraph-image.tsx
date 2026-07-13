@@ -4,7 +4,7 @@ import { ImageResponse } from "next/og";
 export const runtime = "edge";
 
 // Image metadata
-export const alt = "Entry Ecommerce Platform";
+export const alt = "Mamta E-Store";
 export const size = {
   width: 1200,
   height: 630,
@@ -30,13 +30,13 @@ export default async function Image() {
       }}
     >
       <div style={{ fontSize: 80, fontWeight: "bold", marginBottom: 20 }}>
-        Entry Ecommerce
+        Mamta E-Store
       </div>
       <div style={{ fontSize: 40, opacity: 0.9 }}>
-        Premium Baby Products & Essentials
+        Premium Electronics & Appliances
       </div>
       <div style={{ fontSize: 32, marginTop: 40, opacity: 0.8 }}>
-        🍼 Safe • Trusted • Fast Delivery
+        📱 Genuine • Trusted • Fast Delivery
       </div>
     </div>,
     {

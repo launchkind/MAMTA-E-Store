@@ -7,56 +7,56 @@ import { Star, Quote } from "lucide-react";
 const testimonialData = [
   {
     id: 1,
-    name: "Sarah Johnson",
-    location: "New York, NY",
+    name: "Ananya Sharma",
+    location: "Kolkata, West Bengal",
     rating: 5,
     review:
-      "Absolutely love shopping at Babyshop! The quality of products is outstanding and delivery is always on time. My little one loves all the toys we've purchased.",
+      "Absolutely love shopping at Mamta E-Store! I bought a Samsung TV and the delivery was quick and the packaging was excellent. Genuine products at great prices.",
     date: "2024-01-15",
   },
   {
     id: 2,
-    name: "Michael Chen",
-    location: "San Francisco, CA",
+    name: "Rohit Verma",
+    location: "Siliguri, West Bengal",
     rating: 5,
     review:
-      "As a first-time parent, I was overwhelmed with choices. Babyshop made it easy with their curated selection and excellent customer service. Highly recommended!",
+      "Ordered a laptop for my work and it arrived exactly as described. Mamta E-Store made it easy with their detailed specs and excellent customer service. Highly recommended!",
     date: "2024-01-10",
   },
   {
     id: 3,
-    name: "Emily Rodriguez",
-    location: "Austin, TX",
+    name: "Priya Das",
+    location: "Islampur, West Bengal",
     rating: 5,
     review:
-      "The safety standards and quality control at Babyshop give me peace of mind. Every product I've ordered has exceeded my expectations.",
+      "The quality control at Mamta E-Store gives me peace of mind when buying electronics online. My new smartphone works perfectly and arrived well ahead of schedule.",
     date: "2024-01-08",
   },
   {
     id: 4,
-    name: "David Thompson",
-    location: "Seattle, WA",
+    name: "Arjun Mehta",
+    location: "Kolkata, West Bengal",
     rating: 5,
     review:
-      "Fast shipping, great prices, and excellent customer support. Babyshop has become my go-to store for all baby essentials.",
+      "Fast shipping, great prices, and excellent customer support. Mamta E-Store has become my go-to store for all things electronics — phones, appliances, and audio gear.",
     date: "2024-01-05",
   },
   {
     id: 5,
-    name: "Lisa Park",
-    location: "Chicago, IL",
+    name: "Sneha Roy",
+    location: "Malda, West Bengal",
     rating: 5,
     review:
-      "The variety of products is amazing and the website is so easy to navigate. Returns were hassle-free when I needed to exchange a size.",
+      "The variety of products is amazing and the website is so easy to navigate. Their support team helped me pick the right AC for my home within minutes.",
     date: "2024-01-03",
   },
   {
     id: 6,
-    name: "James Wilson",
-    location: "Miami, FL",
+    name: "Vikram Singh",
+    location: "Darjeeling, West Bengal",
     rating: 5,
     review:
-      "Quality products at competitive prices. The customer service team went above and beyond to help me find the perfect gift for my nephew.",
+      "Quality products at competitive prices. The customer service team went above and beyond to help me find the perfect headphones as a gift for my brother.",
     date: "2024-01-01",
   },
 ];
@@ -87,8 +87,8 @@ const TestimonialsPage = () => {
               What Our Customers Say
             </Title>
             <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-              Read reviews from thousands of happy parents who trust Babyshop
-              for their children&apos;s needs
+              Read reviews from thousands of happy customers who trust Mamta
+              E-Store for their electronics needs
             </p>
           </div>
 
@@ -156,9 +156,9 @@ const TestimonialsPage = () => {
               Share Your Experience
             </Title>
             <p className="text-gray-600 mb-6">
-              We&apos;d love to hear about your experience with Babyshop. Your
-              feedback helps us improve and helps other parents make informed
-              decisions.
+              We&apos;d love to hear about your experience with Mamta E-Store.
+              Your feedback helps us improve and helps other customers make
+              informed decisions.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button className="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors">

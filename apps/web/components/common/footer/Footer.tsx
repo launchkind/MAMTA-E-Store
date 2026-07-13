@@ -22,10 +22,8 @@ const informationTab = [
 ];
 const CustomerTab = [
   { title: "My Account", href: "/account" },
-  { title: "Track Order", href: "/track-order" },
   { title: "Shop", href: "/shop" },
   { title: "Wishlist", href: "/wishlist" },
-  { title: "Returns/Exchange", href: "/returns" },
 ];
 const OthersTab = [
   { title: "Partnership Programs", href: "/programs" },
@@ -98,13 +96,12 @@ const Footer = () => {
             <Title className="text-lg mb-4">Other Business</Title>
             <div className="flex flex-col gap-2">
               {OthersTab?.map((item) => (
-                <Link
-                  href={item?.href}
+                <span
                   key={item?.title}
-                  className="text-white/60 hover:text-white transition-colors duration-200"
+                  className="text-white/60 cursor-default select-none"
                 >
                   {item?.title}
-                </Link>
+                </span>
               ))}
             </div>
           </div>

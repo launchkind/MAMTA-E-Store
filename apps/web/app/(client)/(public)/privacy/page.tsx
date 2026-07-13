@@ -25,7 +25,7 @@ const PrivacyPolicyPage = () => {
                 Introduction
               </h2>
               <p className="text-gray-700 leading-relaxed">
-                At Babyshop, we respect your privacy and are committed to
+                At Mamta E-Store, we respect your privacy and are committed to
                 protecting your personal information. This Privacy Policy
                 explains how we collect, use, and safeguard your information
                 when you visit our website or make a purchase.
@@ -145,12 +145,12 @@ const PrivacyPolicyPage = () => {
               </p>
               <div className="mt-4 p-4 bg-gray-50 rounded-lg">
                 <p className="text-gray-700">
-                  <strong>Email:</strong> privacy@babyshop.com
+                  <strong>Email:</strong> support@mamtastore.com
                   <br />
-                  <strong>Phone:</strong> 1-800-BABYSHOP
+                  <strong>Phone:</strong> +91 70013 46162
                   <br />
-                  <strong>Address:</strong> 123 Baby Street, Child City, BC
-                  12345
+                  <strong>Address:</strong> Mamta Complex, Churipatty Road,
+                  Islampur, West Bengal, India
                 </p>
               </div>
             </section>

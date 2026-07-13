@@ -22,17 +22,17 @@ export function generateProductSchema(product: Product, url: string) {
     sku: product.sku || "",
     brand: {
       "@type": "Brand",
-      name: product.brand || "Entry",
+      name: product.brand || "Mamta E-Store",
     },
     offers: {
       "@type": "Offer",
-      url: `http://entry.reactbd.com${url}`,
-      priceCurrency: "USD",
+      url: `https://www.mamtaestore.in${url}`,
+      priceCurrency: "INR",
       price: product.price,
       availability: `https://schema.org/${product.availability || "InStock"}`,
       seller: {
         "@type": "Organization",
-        name: "Entry Ecommerce Platform",
+        name: "Mamta E-Store",
       },
     },
     aggregateRating: product.rating
@@ -49,14 +49,14 @@ export function generateOrganizationSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "Entry Ecommerce Platform",
-    url: "http://entry.reactbd.com",
-    logo: "http://entry.reactbd.com/logo.png",
+    name: "Mamta E-Store",
+    url: "https://www.mamtaestore.in",
+    logo: "https://www.mamtaestore.in/logo.png",
     description:
-      "Entry Ecommerce Platform — your all-in-one online shopping destination",
+      "Mamta E-Store — your one-stop online electronics shopping destination",
     address: {
       "@type": "PostalAddress",
-      addressCountry: "US",
+      addressCountry: "IN",
     },
     contactPoint: {
       "@type": "ContactPoint",
@@ -64,9 +64,9 @@ export function generateOrganizationSchema() {
       email: "mamtaestore@gmail.com",
     },
     sameAs: [
-      "https://www.facebook.com/entryecommerce",
-      "https://www.instagram.com/entryecommerce",
-      "https://twitter.com/entryecommerce",
+      "https://www.facebook.com/share/1E2yGHyw3n/?mibextid=wwXIfr",
+      "https://www.instagram.com/mamta_e_store",
+      "https://youtube.com/@shahfaisaltechlife",
     ],
   };
 }
@@ -75,13 +75,13 @@ export function generateWebsiteSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "Entry Ecommerce Platform",
-    url: "http://entry.reactbd.com",
+    name: "Mamta E-Store",
+    url: "https://www.mamtaestore.in",
     potentialAction: {
       "@type": "SearchAction",
       target: {
         "@type": "EntryPoint",
-        urlTemplate: "http://entry.reactbd.com/search?q={search_term_string}",
+        urlTemplate: "https://www.mamtaestore.in/search?q={search_term_string}",
       },
       "query-input": "required name=search_term_string",
     },
@@ -98,7 +98,7 @@ export function generateBreadcrumbSchema(
       "@type": "ListItem",
       position: index + 1,
       name: item.name,
-      item: `http://entry.reactbd.com${item.url}`,
+      item: `https://www.mamtaestore.in${item.url}`,
     })),
   };
 }

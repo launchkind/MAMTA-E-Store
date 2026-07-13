@@ -8,31 +8,29 @@ import React from "react";
 import "@/lib/env-check"; // Validate environment variables
 
 export const metadata: Metadata = {
-  metadataBase: new URL("http://entry.reactbd.com"),
+  metadataBase: new URL("https://www.mamtaestore.in"),
   title: {
     default:
-      "Entry Ecommerce Platform - Your All-in-One Online Shopping Destination",
-    template: "%s | Entry Ecommerce",
+      "Mamta E-Store - Your One-Stop Online Electronics Shopping Destination",
+    template: "%s | Mamta E-Store",
   },
   description:
-    "Shop amazing products at Entry Ecommerce Platform. Trusted brands, safe products, fast delivery. Your one-stop shop for all needs.",
+    "Shop the latest smartphones, laptops, TVs, appliances, and more at Mamta E-Store. Trusted brands, genuine products, fast delivery.",
   keywords: [
-    "baby products",
-    "baby essentials",
-    "baby strollers",
-    "baby toys",
-    "baby clothing",
-    "baby feeding",
-    "baby care",
+    "electronics",
+    "smartphones",
+    "laptops",
+    "televisions",
+    "home appliances",
+    "audio",
     "online shop",
-    "entry ecommerce",
-    "entry",
+    "mamta e-store",
     "shopping online",
     "best deals",
   ],
-  authors: [{ name: "Entry Team" }],
-  creator: "Entry Ecommerce",
-  publisher: "Entry Ecommerce",
+  authors: [{ name: "Mamta E-Store" }],
+  creator: "Mamta E-Store",
+  publisher: "Mamta E-Store",
   formatDetection: {
     email: false,
     address: false,
@@ -41,29 +39,29 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "http://entry.reactbd.com",
-    siteName: "Entry Ecommerce Platform",
+    url: "https://www.mamtaestore.in",
+    siteName: "Mamta E-Store",
     title:
-      "Entry Ecommerce Platform - Your All-in-One Online Shopping Destination",
+      "Mamta E-Store - Your One-Stop Online Electronics Shopping Destination",
     description:
-      "Shop top quality products, electronics, clothing, & more. Trusted brands, safe products, fast delivery.",
+      "Shop top quality electronics, smartphones, laptops, TVs & more. Trusted brands, genuine products, fast delivery.",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Entry Ecommerce - Your trusted store",
+        alt: "Mamta E-Store - Your trusted electronics store",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
     title:
-      "Entry Ecommerce Platform - Your All-in-One Online Shopping Destination",
+      "Mamta E-Store - Your One-Stop Online Electronics Shopping Destination",
     description:
-      "Shop top quality products with trusted brands and fast delivery.",
+      "Shop top quality electronics with trusted brands and fast delivery.",
     images: ["/og-image.jpg"],
-    creator: "@entryecommerce",
+    creator: "@mamtaestore",
   },
   robots: {
     index: true,
@@ -82,7 +80,7 @@ export const metadata: Metadata = {
     // bing: 'your-bing-verification-code',
   },
   alternates: {
-    canonical: "http://entry.reactbd.com",
+    canonical: "https://www.mamtaestore.in",
   },
 };
 

@@ -19,19 +19,19 @@ export function generateSEO({
   type = "website",
   noIndex = false,
 }: SEOProps): Metadata {
-  const baseUrl = "https://entry.reactbd.com";
+  const baseUrl = "https://www.mamtaestore.in";
   const fullUrl = url ? `${baseUrl}${url}` : baseUrl;
   const fullImageUrl = image.startsWith("http") ? image : `${baseUrl}${image}`;
 
   return {
     title,
     description,
-    keywords: [...keywords, "ecommerce", "entry ecommerce", "online shopping"],
+    keywords: [...keywords, "electronics", "mamta e-store", "online shopping"],
     openGraph: {
       title,
       description,
       url: fullUrl,
-      siteName: "Entry Ecommerce Platform",
+      siteName: "Mamta E-Store",
       images: [
         {
           url: fullImageUrl,
@@ -48,7 +48,7 @@ export function generateSEO({
       title,
       description,
       images: [fullImageUrl],
-      creator: "@entryecommerce",
+      creator: "@mamtaestore",
     },
     alternates: {
       canonical: fullUrl,
@@ -86,7 +86,7 @@ export function generateProductSEO(product: {
     product.name,
     product.category || "",
     product.brand || "",
-    "baby product",
+    "electronics",
     "buy online",
   ].filter(Boolean);
 
@@ -107,13 +107,13 @@ export function generateCategorySEO(category: {
   slug: string;
 }): Metadata {
   return generateSEO({
-    title: `${category.name} - Shop Baby ${category.name} Online`,
+    title: `${category.name} - Shop ${category.name} Online`,
     description:
       category.description ||
-      `Browse our collection of ${category.name.toLowerCase()} for babies. Premium quality products with fast delivery.`,
+      `Browse our collection of ${category.name.toLowerCase()}. Premium quality products with fast delivery.`,
     keywords: [
       category.name,
-      `baby ${category.name.toLowerCase()}`,
+      category.name.toLowerCase(),
       "online shopping",
     ],
     url: `/shop?category=${category.slug}`,

@@ -19,8 +19,8 @@ export const bottomHeaderNavList = [
 
 const footerTopData = [
   {
-    title: "Free Shipping",
-    subTitle: "Free Shipping for orders over $99",
+    title: "Easy EMI",
+    subTitle: "No-cost EMI available on select cards",
     image: footerOne,
   },
   {

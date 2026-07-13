@@ -2,10 +2,10 @@ import { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Entry Ecommerce Platform",
-    short_name: "Entry",
+    name: "Mamta E-Store",
+    short_name: "Mamta E-Store",
     description:
-      "Entry Ecommerce Platform — discover thousands of products at great prices.",
+      "Mamta E-Store — discover thousands of electronics at great prices.",
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",
