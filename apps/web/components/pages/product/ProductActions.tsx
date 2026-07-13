@@ -2,9 +2,10 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Minus, Plus, Loader2 } from "lucide-react";
-import { Product } from "@entry/types";
+import { Product, ProductVariant } from "@entry/types";
 import WishlistButton from "@/components/common/products/WishlistButton";
 import ProductRating from "@/components/common/products/ProductRating";
+import VariantSelector from "@/components/pages/product/VariantSelector";
 import { toast } from "sonner";
 import { useCartStore, useUserStore } from "@/lib/store";
 import { useRouter } from "next/navigation";
@@ -16,9 +17,15 @@ interface ProductActionsProps {
 const ProductActions: React.FC<ProductActionsProps> = ({ product }) => {
   const [quantity, setQuantity] = useState(1);
   const [localLoading, setLocalLoading] = useState(false);
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
+    product.variants && product.variants.length > 0 ? product.variants[0] : null,
+  );
   const { addToCart } = useCartStore(); // Remove isLoading from here
   const { isAuthenticated } = useUserStore();
   const router = useRouter();
+
+  const effectivePrice = selectedVariant?.price ?? product.price;
+  const effectiveStock = selectedVariant?.stock ?? product.stock ?? 0;
 
   const handleQuantityChange = (type: "increase" | "decrease") => {
     if (type === "increase") {
@@ -37,7 +44,7 @@ const ProductActions: React.FC<ProductActionsProps> = ({ product }) => {
 
     setLocalLoading(true);
     try {
-      await addToCart(product, quantity);
+      await addToCart(product, quantity, selectedVariant?._id);
       toast.success("Added to cart successfully!");
     } catch (error) {
       console.error("Add to cart error:", error);
@@ -75,6 +82,22 @@ const ProductActions: React.FC<ProductActionsProps> = ({ product }) => {
         </div>
       </div>
 
+      {/* Variant Selector */}
+      {product.variants && product.variants.length > 0 && (
+        <div className="space-y-3">
+          <VariantSelector
+            variants={product.variants}
+            selected={selectedVariant}
+            onChange={setSelectedVariant}
+          />
+          {selectedVariant?.price != null && (
+            <p className="text-2xl font-bold text-foreground">
+              ${effectivePrice.toFixed(2)}
+            </p>
+          )}
+        </div>
+      )}
+
       {/* Quantity and Add to Cart */}
       <div className="pt-2">
         <p className="mb-3 text-sm font-medium text-muted-foreground uppercase tracking-wider">
@@ -105,11 +128,13 @@ const ProductActions: React.FC<ProductActionsProps> = ({ product }) => {
 
           <Button
             onClick={handleAddToCart}
-            disabled={isButtonLoading}
+            disabled={isButtonLoading || effectiveStock <= 0}
             size="lg"
             className="flex-1 h-12 rounded-xl text-base font-semibold shadow-md hover:shadow-lg transition-all"
           >
-            {isButtonLoading ? (
+            {effectiveStock <= 0 ? (
+              "Out of Stock"
+            ) : isButtonLoading ? (
               <>
                 <Loader2 className="w-5 h-5 animate-spin mr-2" />
                 Adding to Cart...

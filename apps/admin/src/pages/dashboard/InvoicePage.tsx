@@ -150,7 +150,7 @@ export default function InvoicePage() {
           `id, total, status, payment_status, created_at, updated_at,
           shipping_street, shipping_city, shipping_state, shipping_postal_code, shipping_country,
           user:users!user_id(id, name, email),
-          order_items(id, product_id, name, price, quantity, image)`
+          order_items(id, product_id, name, price, quantity, image, variant_label)`
         )
         .eq("id", orderId)
         .single();
@@ -171,7 +171,9 @@ export default function InvoicePage() {
         items: (row.order_items || []).map((item: any) => ({
           product: {
             _id: item.product_id || "",
-            name: item.name || "Unknown Product",
+            name: item.variant_label
+              ? `${item.name || "Unknown Product"} (${item.variant_label})`
+              : item.name || "Unknown Product",
             price: item.price || 0,
             image: item.image,
           },

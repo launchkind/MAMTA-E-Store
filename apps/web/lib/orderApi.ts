@@ -6,6 +6,7 @@ export interface OrderItem {
   price: number;
   quantity: number;
   image?: string;
+  variantLabel?: string;
 }
 
 export interface ShippingAddress {
@@ -92,6 +93,7 @@ interface SupabaseOrderRow {
     price: number;
     quantity: number;
     image?: string;
+    variant_label?: string;
   }>;
 }
 
@@ -116,6 +118,7 @@ function mapOrderRow(row: SupabaseOrderRow): Order {
       price: item.price,
       quantity: item.quantity,
       image: item.image,
+      variantLabel: item.variant_label,
     })),
     cashfreeOrderId: row.cashfree_order_id,
     cashfreePaymentId: row.cashfree_payment_id,
@@ -146,7 +149,7 @@ const ORDER_SELECT = `
   paid_amount, currency, paid_at,
   cashfree_order_id, cashfree_payment_id, cashfree_payment_method, cashfree_bank_reference,
   created_at, updated_at,
-  order_items(product_id, name, price, quantity, image)
+  order_items(product_id, name, price, quantity, image, variant_label)
 `;
 
 export const getUserOrders = async (_token?: string): Promise<Order[]> => {

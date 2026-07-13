@@ -6,10 +6,10 @@ import Container from "../Container";
 import Logo from "../Logo";
 import SearchInput from "./SearchInput";
 import CartIcon from "./CartIcon";
-import SellerBadge from "./SellerBadge";
+// import SellerBadge from "./SellerBadge";
 import UserButton from "./UserButton";
 import MobileUserIcon from "./MobileUserIcon";
-import CompareIcon from "./CompareIcon";
+// import CompareIcon from "./CompareIcon";
 
 interface StickyHeaderProps {
   logoUrl?: string | null;
@@ -58,15 +58,15 @@ const StickyHeader = ({ logoUrl, baseConfig }: StickyHeaderProps) => {
               {/* Actions */}
               <div className="flex items-center gap-4 shrink-0 justify-end">
                 <div className="hidden lg:flex items-center gap-4">
-                  <CompareIcon />
+                  {/* <CompareIcon /> */}
                   <CartIcon />
-                  <SellerBadge />
+                  {/* <SellerBadge /> */}
                   <UserButton />
                 </div>
 
                 {/* Mobile Actions subset if needed, or keeping it clean for mobile */}
                 <div className="lg:hidden flex items-center gap-3">
-                  <CompareIcon />
+                  {/* <CompareIcon /> */}
                   <CartIcon />
                   <MobileUserIcon />
                 </div>

@@ -37,17 +37,44 @@ const ProductDetails = async ({
     const supabase = await createClient();
     const query = supabase
       .from("products")
-      .select("*, category:categories!products_category_id_fkey(id, name, image), brand:brands!products_brand_id_fkey(id, name)");
+      .select("*, category:categories!products_category_id_fkey(id, name, image), brand:brands!products_brand_id_fkey(id, name), variants:product_variants(id, color, storage, price, stock, images, sku, is_default), reviews:product_reviews(id, user_name, rating, comment, is_approved, created_at)");
 
     const { data } = isValidUUID(id)
       ? await query.or(`id.eq.${id},slug.eq.${id}`).single()
       : await query.eq("slug", id).single();
 
     if (data) {
-      product = { ...data, _id: data.id, discountPercentage: data.discount_percentage, averageRating: data.average_rating } as unknown as Product;
-      if (product && product.slug && isValidUUID(id)) {
-        redirect(`/product/${product.slug}`);
-      }
+      const rawVariants = (data.variants ?? []) as Array<Record<string, unknown>>;
+      const variants = rawVariants
+        .map((v) => ({
+          _id: v.id as string,
+          productId: data.id as string,
+          color: (v.color as string) ?? undefined,
+          storage: (v.storage as string) ?? undefined,
+          price: (v.price as number | null) ?? undefined,
+          stock: (v.stock as number) ?? 0,
+          images: (v.images as string[]) ?? [],
+          sku: (v.sku as string) ?? undefined,
+          isDefault: (v.is_default as boolean) ?? false,
+        }))
+        .sort((a, b) => (b.isDefault ? 1 : 0) - (a.isDefault ? 1 : 0));
+      const rawReviews = (data.reviews ?? []) as Array<Record<string, unknown>>;
+      const reviews = rawReviews.map((r) => ({
+        _id: r.id as string,
+        userName: r.user_name as string,
+        rating: r.rating as number,
+        comment: r.comment as string,
+        isApproved: r.is_approved as boolean,
+        createdAt: r.created_at as string,
+      }));
+      product = {
+        ...data,
+        _id: data.id,
+        discountPercentage: data.discount_percentage,
+        averageRating: data.average_rating,
+        variants,
+        reviews,
+      } as unknown as Product;
     }
   } catch (error) {
     console.error("Error fetching product during build:", error);
@@ -60,6 +87,10 @@ const ProductDetails = async ({
         <BackToHome />
       </div>
     );
+  }
+
+  if (product && product.slug && isValidUUID(id)) {
+    redirect(`/product/${product.slug}`);
   }
 
   // Fetch related products from the same category

@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
-// import BuyMeCoffee from "../components/common/BuyMeCoffee";
 import { Toaster } from "sonner";
 import AuthInitializer from "@/components/pages/auth/AuthInitializer";
 import ConsoleProtection from "@/components/common/ConsoleProtection";
-import FloatingButton from "@/components/common/FloatingButton";
 import Head from "next/head";
 import React from "react";
 import "@/lib/env-check"; // Validate environment variables
@@ -89,7 +87,6 @@ export const metadata: Metadata = {
 };
 
 import { Albert_Sans } from "next/font/google";
-import BuyMeCoffee from "@/components/common/BuyMeCoffee";
 
 const albertSans = Albert_Sans({
   subsets: ["latin"],
@@ -123,12 +120,6 @@ export default function RootLayout({
             className: "rounded-lg shadow-lg border",
             duration: 4000,
           }}
-        />
-        {/* <FloatingButton /> */}
-        <BuyMeCoffee
-          turboLink={process.env.NEXT_PUBLIC_TURBO_PURCHASE_LINK}
-          normalLink={process.env.NEXT_PUBLIC_NORMAL_PURCHASE_LINK}
-          githubLink={process.env.NEXT_PUBLIC_GITHUB_REPO_LINK}
         />
       </body>
     </html>

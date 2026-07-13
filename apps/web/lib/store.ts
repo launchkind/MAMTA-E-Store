@@ -2,8 +2,9 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import Cookies from "js-cookie";
 import { createClient } from "./supabase/client";
-import { Product, User } from "@entry/types";
+import { Product, User, ProductVariant } from "@entry/types";
 import { Order } from "./orderApi";
+import type { CartItemVariant } from "./cartApi";
 
 // Helper function to map server cart item to local format
 interface CartServerItem {
@@ -34,11 +35,15 @@ interface CartServerItem {
     ratings?: [];
   };
   quantity: number;
+  variantId?: string;
+  variant?: CartItemVariant;
 }
 
 interface CartProductWithQuantity {
   product: Product;
   quantity: number;
+  variantId?: string;
+  variant?: ProductVariant;
 }
 
 const mapCartItemToProduct = (
@@ -70,6 +75,18 @@ const mapCartItemToProduct = (
     ratings: item.productId.ratings || [],
   },
   quantity: item.quantity,
+  variantId: item.variantId,
+  variant: item.variant
+    ? {
+        _id: item.variant._id,
+        productId: item.productId._id,
+        color: item.variant.color,
+        storage: item.variant.storage,
+        price: item.variant.price,
+        stock: item.variant.stock,
+        images: item.variant.images,
+      }
+    : undefined,
 });
 
 interface UserState {
@@ -92,17 +109,22 @@ interface UserState {
 
 interface CartState {
   cartItems: Product[];
-  cartItemsWithQuantities: Array<{ product: Product; quantity: number }>;
+  cartItemsWithQuantities: Array<CartProductWithQuantity>;
   isLoading: boolean;
-  addToCart: (product: Product, quantity?: number) => Promise<void>;
-  removeFromCart: (productId: string) => Promise<void>;
+  addToCart: (
+    product: Product,
+    quantity?: number,
+    variantId?: string,
+  ) => Promise<void>;
+  removeFromCart: (productId: string, variantId?: string) => Promise<void>;
   updateCartItemQuantity: (
     productId: string,
     quantity: number,
+    variantId?: string,
   ) => Promise<void>;
   clearCart: () => Promise<void>;
-  setCartItems: (items: Array<{ product: Product; quantity: number }>) => void;
-  getCartItemQuantity: (productId: string) => number;
+  setCartItems: (items: Array<CartProductWithQuantity>) => void;
+  getCartItemQuantity: (productId: string, variantId?: string) => number;
   isInCart: (productId: string) => boolean;
   syncCartFromServer: () => Promise<void>;
   // Pagination support
@@ -386,7 +408,7 @@ export const useCartStore = create<CartState>()(
       hasMoreCart: false,
       totalCartItems: 0,
 
-      addToCart: async (product, quantity = 1) => {
+      addToCart: async (product, quantity = 1, variantId) => {
         const { auth_token } = useUserStore.getState();
         if (!auth_token) {
           throw new Error("Authentication required");
@@ -395,7 +417,12 @@ export const useCartStore = create<CartState>()(
         set({ isLoading: true });
         try {
           const { addToCart } = await import("./cartApi");
-          const response = await addToCart(auth_token, product._id, quantity);
+          const response = await addToCart(
+            auth_token,
+            product._id,
+            quantity,
+            variantId,
+          );
 
           if (response.success) {
             const cartItemsWithQuantities =
@@ -414,7 +441,7 @@ export const useCartStore = create<CartState>()(
         }
       },
 
-      removeFromCart: async (productId) => {
+      removeFromCart: async (productId, variantId) => {
         const { auth_token } = useUserStore.getState();
         if (!auth_token) {
           throw new Error("Authentication required");
@@ -423,7 +450,7 @@ export const useCartStore = create<CartState>()(
         set({ isLoading: true });
         try {
           const { removeFromCart } = await import("./cartApi");
-          const response = await removeFromCart(auth_token, productId);
+          const response = await removeFromCart(auth_token, productId, variantId);
 
           if (response.success) {
             const cartItemsWithQuantities =
@@ -442,7 +469,7 @@ export const useCartStore = create<CartState>()(
         }
       },
 
-      updateCartItemQuantity: async (productId, quantity) => {
+      updateCartItemQuantity: async (productId, quantity, variantId) => {
         const { auth_token } = useUserStore.getState();
         if (!auth_token) {
           throw new Error("Authentication required");
@@ -455,6 +482,7 @@ export const useCartStore = create<CartState>()(
             auth_token,
             productId,
             quantity,
+            variantId,
           );
 
           if (response.success) {
@@ -509,10 +537,12 @@ export const useCartStore = create<CartState>()(
         });
       },
 
-      getCartItemQuantity: (productId) => {
+      getCartItemQuantity: (productId, variantId) => {
         const state = get();
         const item = state.cartItemsWithQuantities.find(
-          (item) => item.product._id === productId,
+          (item) =>
+            item.product._id === productId &&
+            (variantId ? item.variantId === variantId : true),
         );
         return item ? item.quantity : 0;
       },

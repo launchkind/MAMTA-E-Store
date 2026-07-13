@@ -3,7 +3,7 @@ import Container from "../Container";
 // import { topHelpCenter } from "@/constants/data";
 // import Link from "next/link";
 import TopSocialLinksClient from "./TopSocialLinksClient";
-import SelectCurrency from "./SelectCurrency";
+// import SelectCurrency from "./SelectCurrency";
 import SelectLanguage from "./SelectLanguage";
 
 const TopBanner = () => {
@@ -18,7 +18,7 @@ const TopBanner = () => {
         </p>
         <div className="flex items-center justify-end">
           <SelectLanguage />
-          <SelectCurrency />
+          {/* <SelectCurrency /> */}
           <TopSocialLinksClient />
         </div>
       </Container>

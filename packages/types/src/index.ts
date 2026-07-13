@@ -129,6 +129,20 @@ export interface Review {
   createdAt: Date;
 }
 
+export interface ProductVariant {
+  _id: string;
+  productId: string;
+  color?: string;
+  storage?: string; // RAM / storage capacity label, e.g. "256GB"
+  price?: number; // overrides the parent product's price when set
+  stock: number;
+  images?: string[];
+  sku?: string;
+  isDefault?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
 export interface Product {
   _id: string;
   name: string;
@@ -156,6 +170,7 @@ export interface Product {
   sold?: number;
   quantity?: number;
   productType?: "base" | "trending" | "featured" | "deals" | "new-arrival";
+  variants?: ProductVariant[];
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -167,6 +182,8 @@ export interface OrderItem {
   quantity: number;
   price: number;
   image?: string;
+  variantId?: string;
+  variantLabel?: string;
 }
 
 export interface Order {
@@ -194,6 +211,8 @@ export interface CartItem {
   product: Product;
   quantity: number;
   price?: number;
+  variantId?: string;
+  variant?: ProductVariant;
 }
 
 export interface Cart {

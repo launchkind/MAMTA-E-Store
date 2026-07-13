@@ -1,7 +1,13 @@
 "use client";
 
-import React from "react";
-import { Lock, Sparkles, ChevronRight, CheckCircle2 } from "lucide-react";
+import React, { useState } from "react";
+import { Star, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { createClient } from "@/lib/supabase/client";
+import { useUserStore } from "@/lib/store";
+import { useAuthSidebarStore } from "@/lib/useAuthSidebarStore";
 
 interface ReviewFormProps {
   productId: string;
@@ -12,50 +18,127 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
   productId,
   onReviewSubmitted,
 }) => {
-  return (
-    <div className="flex flex-col items-center text-center p-6 bg-accent/5 border border-accent/20 rounded-2xl relative overflow-hidden mt-4">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-accent/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl -ml-16 -mb-16 pointer-events-none" />
-      
-      <div className="relative z-10 flex flex-col items-center w-full">
-        <div className="w-16 h-16 bg-background rounded-full flex items-center justify-center shadow-lg border border-border mb-5 relative">
-          <Lock className="w-7 h-7 text-accent" />
-          <div className="absolute -top-1 -right-1 bg-linear-to-tr from-accent to-purple-600 p-1.5 rounded-lg shadow-md rotate-12">
-            <Sparkles className="w-3.5 h-3.5 text-white" />
-          </div>
-        </div>
+  const { isAuthenticated, authUser } = useUserStore();
+  const { openLogin } = useAuthSidebarStore();
+  const [rating, setRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [comment, setComment] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-        <h3 className="text-xl font-bold text-foreground mb-3">
-          Premium Feature
-        </h3>
-        
-        <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
-          Interactive product reviews, rich-text formatting, and the entire admin moderation workflow are available exclusively in the premium source code.
+  if (!isAuthenticated || !authUser) {
+    return (
+      <div className="flex flex-col items-center text-center p-6 bg-muted/40 border border-border/50 rounded-2xl">
+        <Star className="w-8 h-8 text-muted-foreground mb-3" />
+        <p className="text-sm text-muted-foreground mb-4">
+          Please sign in to write a review.
         </p>
+        <Button onClick={openLogin}>Sign In</Button>
+      </div>
+    );
+  }
 
-        <div className="w-full space-y-3 mb-8 text-left bg-background/50 p-4 rounded-xl border border-border/50">
-          {[
-            "Interactive star ratings",
-            "Rich text descriptions",
-            "Admin moderation dashboard",
-            "Verified buyer badges"
-          ].map((feature, idx) => (
-            <div key={idx} className="flex items-start gap-3">
-              <CheckCircle2 className="w-4 h-4 text-accent shrink-0 mt-0.5" />
-              <span className="text-sm font-medium text-foreground/80">{feature}</span>
-            </div>
+  const handleSubmit = async () => {
+    if (rating < 1 || rating > 5) {
+      toast.error("Please select a star rating.");
+      return;
+    }
+    if (comment.trim().length < 5) {
+      toast.error("Please write a few words about your experience.");
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.from("product_reviews").insert({
+        product_id: productId,
+        user_id: authUser._id,
+        user_name: authUser.name || "Anonymous",
+        rating,
+        comment: comment.trim(),
+      });
+
+      if (error) {
+        if (error.code === "23505") {
+          toast.error("You've already reviewed this product.");
+        } else {
+          toast.error("Failed to submit review. Please try again.");
+        }
+        return;
+      }
+
+      toast.success("Review submitted! It will appear after approval.");
+      setRating(0);
+      setComment("");
+      onReviewSubmitted?.();
+    } catch {
+      toast.error("Failed to submit review. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-4 p-1">
+      <div>
+        <p className="text-sm font-medium text-foreground mb-2">
+          Your Rating
+        </p>
+        <div className="flex items-center gap-1">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <button
+              key={star}
+              type="button"
+              onClick={() => setRating(star)}
+              onMouseEnter={() => setHoverRating(star)}
+              onMouseLeave={() => setHoverRating(0)}
+              className="p-0.5"
+              aria-label={`Rate ${star} star${star > 1 ? "s" : ""}`}
+            >
+              <Star
+                size={28}
+                className={
+                  star <= (hoverRating || rating)
+                    ? "fill-primary text-primary"
+                    : "text-muted-foreground/30"
+                }
+              />
+            </button>
           ))}
         </div>
-
-        <a
-          href={process.env.NEXT_PUBLIC_PURCHASE_LINK || "https://buymeacoffee.com/reactbd/e/518205"}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-full flex items-center justify-center gap-2 bg-linear-to-r from-accent to-purple-600 text-white px-6 py-3.5 rounded-xl font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 active:scale-95 text-sm"
-        >
-          Unlock Premium <ChevronRight className="w-4 h-4" />
-        </a>
       </div>
+
+      <div>
+        <p className="text-sm font-medium text-foreground mb-2">
+          Your Review
+        </p>
+        <Textarea
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          placeholder="Share your experience with this product..."
+          rows={5}
+          maxLength={1000}
+        />
+        <p className="text-xs text-muted-foreground mt-1 text-right">
+          {comment.length}/1000
+        </p>
+      </div>
+
+      <Button
+        onClick={handleSubmit}
+        disabled={submitting}
+        className="w-full font-semibold"
+        size="lg"
+      >
+        {submitting ? (
+          <>
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            Submitting...
+          </>
+        ) : (
+          "Submit Review"
+        )}
+      </Button>
     </div>
   );
 };

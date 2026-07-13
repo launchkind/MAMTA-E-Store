@@ -81,6 +81,7 @@ import ProductSkeleton, {
 } from "@/components/skeleton/ProductSkeleton";
 import { BulkUploadModal } from "@/components/products/BulkUploadModal";
 import { AboutItemsField } from "@/components/products/AboutItemsField";
+import { ProductVariantsField } from "@/components/products/ProductVariantsField";
 
 type Product = {
   _id: string;
@@ -114,6 +115,17 @@ type Product = {
   approvalStatus?: "pending" | "approved" | "rejected";
   createdAt: string;
   aboutItems?: string[];
+  variants?: {
+    _id: string;
+    productId: string;
+    color?: string;
+    storage?: string;
+    price?: number;
+    stock: number;
+    images?: string[];
+    sku?: string;
+    isDefault?: boolean;
+  }[];
 };
 
 type Category = {
@@ -212,6 +224,17 @@ export default function ProductsPage() {
     approvalStatus: row.approval_status,
     createdAt: row.created_at,
     aboutItems: row.about_items ?? [],
+    variants: (row.variants ?? []).map((v: any) => ({
+      _id: v.id,
+      productId: row.id,
+      color: v.color ?? "",
+      storage: v.storage ?? "",
+      price: v.price ?? undefined,
+      stock: v.stock ?? 0,
+      images: v.images ?? [],
+      sku: v.sku ?? "",
+      isDefault: v.is_default ?? false,
+    })),
   });
 
   // No-op: image deletion from storage requires a backend integration
@@ -235,6 +258,7 @@ export default function ProductsPage() {
       image: "",
       productType: [],
       aboutItems: [],
+      variants: [],
     },
   });
 
@@ -252,6 +276,7 @@ export default function ProductsPage() {
       image: "",
       productType: [],
       aboutItems: [],
+      variants: [],
     },
   });
 
@@ -268,7 +293,8 @@ export default function ProductsPage() {
           category:categories!category_id(id, name, slug),
           brand:brands!brand_id(id, name, image),
           seller:sellers!seller_id(id, store_name),
-          product_product_types(product_type_id, product_type:product_types!product_type_id(id, name, type, color))
+          product_product_types(product_type_id, product_type:product_types!product_type_id(id, name, type, color)),
+          variants:product_variants(id, color, storage, price, stock, images, sku, is_default)
         `,
           { count: "exact" },
         )
@@ -501,6 +527,14 @@ export default function ProductsPage() {
                 : product.productType,
             ]
           : [],
+      variants: (product.variants ?? []).map((v) => ({
+        color: v.color ?? "",
+        storage: v.storage ?? "",
+        price: v.price,
+        stock: v.stock,
+        images: v.images ?? [],
+        sku: v.sku ?? "",
+      })),
     });
     setIsEditModalOpen(true);
   };
@@ -616,6 +650,22 @@ export default function ProductsPage() {
         );
       }
 
+      // Insert variants
+      if (data.variants && data.variants.length > 0 && newProduct) {
+        await supabase.from("product_variants").insert(
+          data.variants.map((v, i) => ({
+            product_id: newProduct.id,
+            color: v.color || null,
+            storage: v.storage || null,
+            price: v.price ?? null,
+            stock: Number(v.stock),
+            images: v.images ?? [],
+            sku: v.sku || null,
+            is_default: i === 0,
+          })),
+        );
+      }
+
       toast({
         title: "Success",
         description: "Product created successfully",
@@ -685,6 +735,26 @@ export default function ProductsPage() {
           (data.productType as string[]).map((ptId) => ({
             product_id: selectedProduct._id,
             product_type_id: ptId,
+          })),
+        );
+      }
+
+      // Sync variants
+      await supabase
+        .from("product_variants")
+        .delete()
+        .eq("product_id", selectedProduct._id);
+      if (data.variants && data.variants.length > 0) {
+        await supabase.from("product_variants").insert(
+          data.variants.map((v, i) => ({
+            product_id: selectedProduct._id,
+            color: v.color || null,
+            storage: v.storage || null,
+            price: v.price ?? null,
+            stock: Number(v.stock),
+            images: v.images ?? [],
+            sku: v.sku || null,
+            is_default: i === 0,
           })),
         );
       }
@@ -1761,6 +1831,11 @@ export default function ProductsPage() {
                   name="aboutItems"
                   disabled={formLoading}
                 />
+                <ProductVariantsField
+                  control={formAdd.control}
+                  name="variants"
+                  disabled={formLoading}
+                />
                 <div className="grid grid-cols-2 gap-4">
                   <FormField<FormData>
                     control={formAdd.control}
@@ -2057,6 +2132,11 @@ export default function ProductsPage() {
                 <AboutItemsField
                   control={formEdit.control}
                   name="aboutItems"
+                  disabled={formLoading}
+                />
+                <ProductVariantsField
+                  control={formEdit.control}
+                  name="variants"
                   disabled={formLoading}
                 />
                 <div className="grid grid-cols-2 gap-4">

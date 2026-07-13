@@ -9,7 +9,7 @@ import {
   LogOut,
   Package,
   Bell,
-  Store,
+  // Store, // used only by the commented-out Seller Dashboard link below
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -161,14 +161,14 @@ const UserButton = () => {
             </Link>
 
             {/* Seller Dashboard Link - Visible to all for upsell */}
-            <Link
+            {/* <Link
               href="/seller"
               onClick={() => setOpen(false)}
               className="flex items-center gap-3 px-3 py-2 text-sm text-primary hover:bg-muted rounded-md transition-colors font-medium"
             >
               <Store className="w-4 h-4" />
               <span>Seller Dashboard</span>
-            </Link>
+            </Link> */}
 
             <Link
               href="/user/orders"

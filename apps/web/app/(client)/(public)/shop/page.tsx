@@ -12,14 +12,14 @@ const ShopPageServer = async () => {
     const supabase = await createClient();
 
     const [brandsRes, categoriesRes, ptRes, sellersRes] = await Promise.all([
-      supabase.from("brands").select("id, name, image, is_active").eq("is_active", true),
-      supabase.from("categories").select("id, name, image, category_type, parent_id"),
-      supabase.from("product_types").select("id, name, description, is_active").eq("is_active", true),
+      supabase.from("brands").select("id, name, image"),
+      supabase.from("categories").select("id, name, slug, image, category_type, parent_id"),
+      supabase.from("product_types").select("id, name, description"),
       supabase.from("sellers").select("id, store_name, status, logo").eq("status", "approved"),
     ]);
 
     brands = (brandsRes.data || []).map((b: Record<string, unknown>) => ({ _id: b.id, name: b.name, image: b.image } as unknown as Brand));
-    categories = (categoriesRes.data || []).map((c: Record<string, unknown>) => ({ _id: c.id, name: c.name, image: c.image, categoryType: c.category_type } as unknown as Category));
+    categories = (categoriesRes.data || []).map((c: Record<string, unknown>) => ({ _id: c.id, name: c.name, slug: c.slug, image: c.image, categoryType: c.category_type } as unknown as Category));
     productTypes = (ptRes.data || []).map((pt: Record<string, unknown>) => ({ _id: pt.id, name: pt.name, description: pt.description, isActive: pt.is_active } as unknown as ProductType));
     sellers = (sellersRes.data || []).map((s: Record<string, unknown>) => ({ _id: s.id, storeName: s.store_name, status: s.status, logo: s.logo } as unknown as Seller));
   } catch (err) {

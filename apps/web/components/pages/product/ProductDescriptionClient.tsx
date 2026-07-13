@@ -24,10 +24,21 @@ const ProductDescriptionClient: React.FC<ProductDescriptionClientProps> = ({
       const supabase = createClient();
       const { data } = await supabase
         .from("products")
-        .select("*, category:categories!products_category_id_fkey(id, name, image), brand:brands!products_brand_id_fkey(id, name)")
+        .select("*, category:categories!products_category_id_fkey(id, name, image), brand:brands!products_brand_id_fkey(id, name), reviews:product_reviews(id, user_name, rating, comment, is_approved, created_at)")
         .eq("id", initialProduct._id)
         .single();
-      if (data) setProduct({ ...data, _id: data.id, discountPercentage: data.discount_percentage, averageRating: data.average_rating } as unknown as Product);
+      if (data) {
+        const rawReviews = (data.reviews ?? []) as Array<Record<string, unknown>>;
+        const reviews = rawReviews.map((r) => ({
+          _id: r.id as string,
+          userName: r.user_name as string,
+          rating: r.rating as number,
+          comment: r.comment as string,
+          isApproved: r.is_approved as boolean,
+          createdAt: r.created_at as string,
+        }));
+        setProduct({ ...data, _id: data.id, discountPercentage: data.discount_percentage, averageRating: data.average_rating, reviews } as unknown as Product);
+      }
     } catch (error) {
       console.error("Failed to refresh product:", error);
     } finally {

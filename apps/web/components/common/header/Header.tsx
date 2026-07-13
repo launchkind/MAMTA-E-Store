@@ -6,11 +6,11 @@ import SearchInput from "./SearchInput";
 import UserButton from "./UserButton";
 import CartIcon from "./CartIcon";
 import Logo from "../Logo";
-import SellerBadge from "./SellerBadge";
+// import SellerBadge from "./SellerBadge";
 import BottomHeader from "./BottomHeader";
 import StickyHeader from "./StickyHeader";
 import MobileUserIcon from "./MobileUserIcon";
-import CompareIcon from "./CompareIcon";
+// import CompareIcon from "./CompareIcon";
 import { Search, X } from "lucide-react";
 import { useMobileSearchStore } from "@/lib/useMobileSearchStore";
 
@@ -75,9 +75,9 @@ const Header = ({
             <SearchInput config={baseConfig?.search} className="lg:flex-1" />
 
             <div className="hidden lg:flex items-center gap-5 shrink-0">
-              <CompareIcon />
+              {/* <CompareIcon /> */}
               <CartIcon />
-              <SellerBadge />
+              {/* <SellerBadge /> */}
               <UserButton />
             </div>
           </div>
@@ -85,7 +85,7 @@ const Header = ({
           {/* Mobile Actions: Search | Cart | User avatar */}
           <div className="lg:hidden flex items-center gap-3 shrink-0 ml-auto order-2">
             <MobileSearchButton />
-            <CompareIcon />
+            {/* <CompareIcon /> */}
             <CartIcon />
             <MobileUserIcon />
           </div>

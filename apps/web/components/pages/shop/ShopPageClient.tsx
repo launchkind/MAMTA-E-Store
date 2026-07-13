@@ -58,9 +58,20 @@ const ShopPageClient = ({
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
-  const [category, setCategory] = useState<string>(
-    searchParams.get("category") || "",
-  );
+  const [category, setCategory] = useState<string>(() => {
+    const fromUrl = searchParams.get("category") || "";
+    if (!fromUrl) return "";
+    // Resolve slug/name to the real category id synchronously so the very
+    // first product fetch never fires with a non-UUID value (which errors
+    // out and can race with the corrected fetch, flashing "no products").
+    const match = categories.find(
+      (cat) =>
+        cat._id === fromUrl ||
+        cat.slug?.toLowerCase() === fromUrl.toLowerCase() ||
+        cat.name.toLowerCase() === fromUrl.toLowerCase(),
+    );
+    return match ? match._id : fromUrl;
+  });
   const [brand, setBrand] = useState<string>(searchParams.get("brand") || "");
   const [search, setSearch] = useState<string>(
     searchParams.get("search") || "",
@@ -130,7 +141,9 @@ const ShopPageClient = ({
       );
       if (!categoryExists) {
         const categoryByName = categories.find(
-          (cat) => cat.name.toLowerCase() === categoryFromUrl.toLowerCase(),
+          (cat) =>
+            cat.slug?.toLowerCase() === categoryFromUrl.toLowerCase() ||
+            cat.name.toLowerCase() === categoryFromUrl.toLowerCase(),
         );
 
         if (categoryByName) {

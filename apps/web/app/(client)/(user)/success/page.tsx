@@ -13,7 +13,7 @@ async function fetchOrderServer(orderId: string): Promise<Order | null> {
         id, user_id, status, payment_status, payment_method, total,
         shipping_street, shipping_city, shipping_state, shipping_country, shipping_postal_code,
         created_at, updated_at,
-        order_items(product_id, name, price, quantity, image)
+        order_items(product_id, name, price, quantity, image, variant_label)
       `)
       .eq("id", orderId)
       .single();
@@ -34,12 +34,13 @@ async function fetchOrderServer(orderId: string): Promise<Order | null> {
         country: data.shipping_country,
         postalCode: data.shipping_postal_code,
       },
-      items: ((data as { order_items?: Array<{ product_id: string; name: string; price: number; quantity: number; image?: string }> }).order_items || []).map((item) => ({
+      items: ((data as { order_items?: Array<{ product_id: string; name: string; price: number; quantity: number; image?: string; variant_label?: string }> }).order_items || []).map((item) => ({
         productId: item.product_id,
         name: item.name,
         price: item.price,
         quantity: item.quantity,
         image: item.image,
+        variantLabel: item.variant_label,
       })),
       createdAt: data.created_at,
       updatedAt: data.updated_at,

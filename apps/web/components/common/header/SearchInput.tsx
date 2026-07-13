@@ -193,7 +193,7 @@ const SearchInput = ({
       const supabase = createClient();
       const { data } = await supabase
         .from("products")
-        .select("id, name, description, price, discount_percentage, stock, average_rating, image, category:categories!products_category_id_fkey(id, name, image), brand:brands!products_brand_id_fkey(id, name)")
+        .select("id, name, slug, description, price, discount_percentage, stock, average_rating, image, category:categories!products_category_id_fkey(id, name, image), brand:brands!products_brand_id_fkey(id, name)")
         .limit(5);
       setFeaturedProducts((data || []).map(mapProduct));
     } catch (error) {
@@ -216,7 +216,7 @@ const SearchInput = ({
       const supabase = createClient();
       const { data } = await supabase
         .from("products")
-        .select("id, name, description, price, discount_percentage, stock, average_rating, image, category:categories!products_category_id_fkey(id, name, image), brand:brands!products_brand_id_fkey(id, name)")
+        .select("id, name, slug, description, price, discount_percentage, stock, average_rating, image, category:categories!products_category_id_fkey(id, name, image), brand:brands!products_brand_id_fkey(id, name)")
         .ilike("name", `%${searchTerm}%`)
         .limit(10);
       setProducts((data || []).map(mapProduct));

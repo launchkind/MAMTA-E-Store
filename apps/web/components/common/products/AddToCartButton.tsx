@@ -20,9 +20,13 @@ const AddToCartButton = ({ product, className }: Props) => {
   const [localLoading, setLocalLoading] = useState(false);
   const router = useRouter();
 
-  const cartQuantity = getCartItemQuantity(product._id);
+  const defaultVariant =
+    product.variants && product.variants.length > 0
+      ? (product.variants.find((v) => v.isDefault) ?? product.variants[0])
+      : undefined;
+  const cartQuantity = getCartItemQuantity(product._id, defaultVariant?._id);
   const isInCart = cartQuantity > 0;
-  const availableStock = product?.stock || 0;
+  const availableStock = defaultVariant?.stock ?? product?.stock ?? 0;
 
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -45,7 +49,7 @@ const AddToCartButton = ({ product, className }: Props) => {
 
     setLocalLoading(true);
     try {
-      await addToCart(product, 1);
+      await addToCart(product, 1, defaultVariant?._id);
       toast.success("Added to cart successfully!", {
         description: `Name: ${product?.name}`,
       });
@@ -72,7 +76,7 @@ const AddToCartButton = ({ product, className }: Props) => {
 
     setLocalLoading(true);
     try {
-      await updateCartItemQuantity(product._id, newQuantity);
+      await updateCartItemQuantity(product._id, newQuantity, defaultVariant?._id);
     } catch (error) {
       console.error("Update quantity error:", error);
       toast.error("Failed to update quantity");

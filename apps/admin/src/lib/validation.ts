@@ -103,6 +103,19 @@ export const productSchema = z.object({
     ),
   image: z.string().optional(), // Deprecated: kept for backward compatibility
   productType: z.array(z.string()),
+  variants: z
+    .array(
+      z.object({
+        color: z.string().optional(),
+        storage: z.string().optional(),
+        price: z.number().optional(),
+        stock: z.number().min(0),
+        images: z.array(z.string()).optional(),
+        sku: z.string().optional(),
+      }),
+    )
+    .optional()
+    .default([]),
 });
 
 export const ratingSchema = z.object({

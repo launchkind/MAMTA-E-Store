@@ -30,6 +30,7 @@ interface OrderItem {
   price: number;
   quantity: number;
   image?: string;
+  variantLabel?: string;
   product?: {
     _id: string;
     name: string;
@@ -141,6 +142,7 @@ export default function OrderDetailSidebar({
           price: item.price || 0,
           quantity: item.quantity || 1,
           image: item.image,
+          variantLabel: item.variant_label,
         })),
         totalAmount: row.total || 0,
         total: row.total || 0,
@@ -362,6 +364,9 @@ export default function OrderDetailSidebar({
                       />
                       <div className="flex-1 min-w-0">
                         <p className="font-medium truncate">{itemName}</p>
+                        {item.variantLabel && (
+                          <p className="text-xs text-muted-foreground">{item.variantLabel}</p>
+                        )}
                         <p className="text-sm text-muted-foreground">
                           ${itemPrice.toFixed(2)} × {item.quantity}
                         </p>

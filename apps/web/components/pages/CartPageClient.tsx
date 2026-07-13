@@ -45,6 +45,11 @@ const CartPageClient = () => {
   const [hasInitializedSelection, setHasInitializedSelection] = useState(false);
   const router = useRouter();
 
+  const getLineKey = (item: { product: { _id: string }; variantId?: string }) =>
+    `${item.product._id}-${item.variantId ?? ""}`;
+  const getLinePrice = (item: { product: { price: number }; variant?: { price?: number } }) =>
+    item.variant?.price ?? item.product.price;
+
   // Initialize cart with pagination
   const initializeCart = useCallback(async () => {
     if (auth_token) {
@@ -68,13 +73,18 @@ const CartPageClient = () => {
 
       if (buyNowProductId) {
         // Only select the Buy Now product
-        setSelectedItems(new Set([buyNowProductId]));
+        const buyNowItem = cartItemsWithQuantities.find(
+          (item) => item.product._id === buyNowProductId,
+        );
+        setSelectedItems(
+          new Set(buyNowItem ? [getLineKey(buyNowItem)] : []),
+        );
         // Clear the flag after using it
         sessionStorage.removeItem("buyNowProductId");
       } else {
         // Select all items by default for normal cart view
         const allItemIds = new Set(
-          cartItemsWithQuantities.map((item) => item.product._id),
+          cartItemsWithQuantities.map((item) => getLineKey(item)),
         );
         setSelectedItems(allItemIds);
       }
@@ -119,8 +129,8 @@ const CartPageClient = () => {
 
   const calculateSubtotal = () => {
     return cartItemsWithQuantities
-      .filter((item) => selectedItems.has(item.product._id))
-      .reduce((total, item) => total + item.product.price * item.quantity, 0);
+      .filter((item) => selectedItems.has(getLineKey(item)))
+      .reduce((total, item) => total + getLinePrice(item) * item.quantity, 0);
   };
 
   const handleToggleItem = (itemId: string) => {
@@ -140,7 +150,7 @@ const CartPageClient = () => {
       setSelectedItems(new Set());
     } else {
       setSelectedItems(
-        new Set(cartItemsWithQuantities.map((item) => item.product._id)),
+        new Set(cartItemsWithQuantities.map((item) => getLineKey(item))),
       );
     }
   };
@@ -159,13 +169,17 @@ const CartPageClient = () => {
     return subtotal + shipping + tax;
   };
 
-  const handleQuantityChange = async (itemId: string, newQuantity: number) => {
+  const handleQuantityChange = async (
+    itemId: string,
+    newQuantity: number,
+    variantId?: string,
+  ) => {
     if (newQuantity < 1) {
-      await handleRemoveItem(itemId);
+      await handleRemoveItem(itemId, variantId);
       return;
     }
     try {
-      await updateCartItemQuantity(itemId, newQuantity);
+      await updateCartItemQuantity(itemId, newQuantity, variantId);
       toast.success("Quantity updated");
     } catch (error) {
       console.error("Failed to update quantity:", error);
@@ -173,9 +187,9 @@ const CartPageClient = () => {
     }
   };
 
-  const handleRemoveItem = async (itemId: string) => {
+  const handleRemoveItem = async (itemId: string, variantId?: string) => {
     try {
-      await removeFromCart(itemId);
+      await removeFromCart(itemId, variantId);
       toast.success("Item removed from cart");
     } catch (error) {
       console.error("Failed to remove item:", error);
@@ -207,13 +221,15 @@ const CartPageClient = () => {
     try {
       // Filter cart items to only include selected ones
       const selectedCartItems = cartItemsWithQuantities.filter((item) =>
-        selectedItems.has(item.product._id)
+        selectedItems.has(getLineKey(item))
       );
 
       redirectToWhatsAppOrder(
         selectedCartItems.map((item) => ({
-          name: item.product.name,
-          price: item.product.price,
+          name: [item.product.name, item.variant?.color, item.variant?.storage]
+            .filter(Boolean)
+            .join(" - "),
+          price: getLinePrice(item),
           quantity: item.quantity,
           product: { _id: item.product._id, slug: item.product.slug },
         }))
@@ -471,9 +487,19 @@ const CartPageClient = () => {
 
             {/* Cart Items */}
             <div className="space-y-4">
-              {cartItemsWithQuantities.map((cartItem) => (
+              {cartItemsWithQuantities.map((cartItem) => {
+                const lineKey = getLineKey(cartItem);
+                const linePrice = getLinePrice(cartItem);
+                const variantLabel = [cartItem.variant?.color, cartItem.variant?.storage]
+                  .filter(Boolean)
+                  .join(" / ");
+                const lineImage =
+                  cartItem.variant?.images?.[0] ||
+                  cartItem.product.images?.[0] ||
+                  cartItem.product.image;
+                return (
                 <div
-                  key={cartItem.product._id}
+                  key={lineKey}
                   className="border border-gray-100 rounded-lg p-4 lg:p-0 lg:border-0 lg:rounded-none"
                 >
                   {/* Mobile Layout */}
@@ -482,23 +508,17 @@ const CartPageClient = () => {
                       {/* Checkbox */}
                       <div className="pt-1">
                         <Checkbox
-                          checked={selectedItems.has(cartItem.product._id)}
-                          onCheckedChange={() =>
-                            handleToggleItem(cartItem.product._id)
-                          }
+                          checked={selectedItems.has(lineKey)}
+                          onCheckedChange={() => handleToggleItem(lineKey)}
                           className="h-5 w-5"
                         />
                       </div>
                       {/* Product Image */}
                       <Link href={getProductUrl(cartItem.product)}>
                         <div className="relative w-20 h-20 bg-gray-100 rounded-lg overflow-hidden shrink-0 hover:scale-105 transition-transform duration-200 cursor-pointer">
-                          {cartItem.product.images?.[0] ||
-                          cartItem.product.image ? (
+                          {lineImage ? (
                             <Image
-                              src={
-                                cartItem.product.images?.[0] ||
-                                cartItem.product.image
-                              }
+                              src={lineImage}
                               alt={cartItem.product.name}
                               fill
                               className="object-cover"
@@ -514,10 +534,13 @@ const CartPageClient = () => {
                       {/* Product Details */}
                       <div className="flex-1 min-w-0">
                         <Link href={getProductUrl(cartItem.product)}>
-                          <h3 className="font-medium text-gray-900 mb-2 text-sm leading-5 hover:text-blue-600 transition-colors cursor-pointer">
+                          <h3 className="font-medium text-gray-900 mb-1 text-sm leading-5 hover:text-blue-600 transition-colors cursor-pointer">
                             {cartItem.product.name}
                           </h3>
                         </Link>
+                        {variantLabel && (
+                          <p className="text-xs text-gray-500 mb-1">{variantLabel}</p>
+                        )}
 
                         {/* Price and Quantity Row */}
                         <div className="flex items-center justify-between mb-3">
@@ -526,7 +549,7 @@ const CartPageClient = () => {
                               Price
                             </span>
                             <PriceFormatter
-                              amount={cartItem.product.price}
+                              amount={linePrice}
                               className="text-sm font-medium text-gray-900"
                             />
                           </div>
@@ -540,6 +563,7 @@ const CartPageClient = () => {
                                 handleQuantityChange(
                                   cartItem.product._id,
                                   cartItem.quantity - 1,
+                                  cartItem.variantId,
                                 )
                               }
                               className="h-8 w-8 p-0 hover:bg-gray-50 border-0 rounded-none"
@@ -556,6 +580,7 @@ const CartPageClient = () => {
                                 handleQuantityChange(
                                   cartItem.product._id,
                                   cartItem.quantity + 1,
+                                  cartItem.variantId,
                                 )
                               }
                               className="h-8 w-8 p-0 hover:bg-gray-50 border-0 rounded-none"
@@ -572,9 +597,7 @@ const CartPageClient = () => {
                               Subtotal
                             </span>
                             <PriceFormatter
-                              amount={
-                                cartItem.product.price * cartItem.quantity
-                              }
+                              amount={linePrice * cartItem.quantity}
                               className="text-sm font-semibold text-gray-900"
                             />
                           </div>
@@ -583,7 +606,7 @@ const CartPageClient = () => {
                             variant="ghost"
                             size="sm"
                             onClick={() =>
-                              handleRemoveItem(cartItem.product._id)
+                              handleRemoveItem(cartItem.product._id, cartItem.variantId)
                             }
                             className="text-red-500 hover:text-red-600 hover:bg-red-50 px-2 py-1 h-auto text-xs"
                           >
@@ -600,10 +623,8 @@ const CartPageClient = () => {
                     {/* Checkbox */}
                     <div className="lg:col-span-1 flex items-center justify-center">
                       <Checkbox
-                        checked={selectedItems.has(cartItem.product._id)}
-                        onCheckedChange={() =>
-                          handleToggleItem(cartItem.product._id)
-                        }
+                        checked={selectedItems.has(lineKey)}
+                        onCheckedChange={() => handleToggleItem(lineKey)}
                         className="h-5 w-5"
                       />
                     </div>
@@ -611,13 +632,9 @@ const CartPageClient = () => {
                     <div className="lg:col-span-5 flex items-center gap-4">
                       <Link href={getProductUrl(cartItem.product)}>
                         <div className="relative w-20 h-20 bg-gray-100 rounded-lg overflow-hidden shrink-0 hover:scale-105 transition-transform duration-200 cursor-pointer">
-                          {cartItem.product.images?.[0] ||
-                          cartItem.product.image ? (
+                          {lineImage ? (
                             <Image
-                              src={
-                                cartItem.product.images?.[0] ||
-                                cartItem.product.image
-                              }
+                              src={lineImage}
                               alt={cartItem.product.name}
                               fill
                               className="object-cover"
@@ -635,12 +652,15 @@ const CartPageClient = () => {
                             {cartItem.product.name}
                           </h3>
                         </Link>
+                        {variantLabel && (
+                          <p className="text-xs text-gray-500 mb-1">{variantLabel}</p>
+                        )}
                         <div className="flex items-center gap-3">
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() =>
-                              handleRemoveItem(cartItem.product._id)
+                              handleRemoveItem(cartItem.product._id, cartItem.variantId)
                             }
                             className="text-red-500 hover:text-red-600 hover:bg-red-50 p-0 h-auto text-xs"
                           >
@@ -654,7 +674,7 @@ const CartPageClient = () => {
                     {/* Price */}
                     <div className="lg:col-span-2 text-center">
                       <PriceFormatter
-                        amount={cartItem.product.price}
+                        amount={linePrice}
                         className="text-base font-medium text-gray-900"
                       />
                     </div>
@@ -669,6 +689,7 @@ const CartPageClient = () => {
                             handleQuantityChange(
                               cartItem.product._id,
                               cartItem.quantity - 1,
+                              cartItem.variantId,
                             )
                           }
                           className="h-10 w-10 p-0 hover:bg-gray-50 border-0 rounded-none"
@@ -685,6 +706,7 @@ const CartPageClient = () => {
                             handleQuantityChange(
                               cartItem.product._id,
                               cartItem.quantity + 1,
+                              cartItem.variantId,
                             )
                           }
                           className="h-10 w-10 p-0 hover:bg-gray-50 border-0 rounded-none"
@@ -697,13 +719,14 @@ const CartPageClient = () => {
                     {/* Subtotal */}
                     <div className="lg:col-span-2 text-center">
                       <PriceFormatter
-                        amount={cartItem.product.price * cartItem.quantity}
+                        amount={linePrice * cartItem.quantity}
                         className="text-base font-semibold text-gray-900"
                       />
                     </div>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* Loading More Indicator */}

@@ -1,5 +1,14 @@
 import { createClient } from "./supabase/client";
 
+export interface CartItemVariant {
+  _id: string;
+  color?: string;
+  storage?: string;
+  price?: number;
+  stock: number;
+  images?: string[];
+}
+
 export interface CartItem {
   productId: {
     _id: string;
@@ -16,6 +25,8 @@ export interface CartItem {
     updatedAt: string;
   };
   quantity: number;
+  variantId?: string;
+  variant?: CartItemVariant;
 }
 
 export interface CartResponse {
@@ -33,6 +44,7 @@ export interface CartResponse {
 
 const mapCartRow = (row: Record<string, unknown>): CartItem => {
   const product = (row.product || {}) as Record<string, unknown>;
+  const variant = row.variant as Record<string, unknown> | null;
   return {
     productId: {
       _id: (product.id as string) || (row.product_id as string),
@@ -49,6 +61,17 @@ const mapCartRow = (row: Record<string, unknown>): CartItem => {
       updatedAt: (product.updated_at as string) || "",
     },
     quantity: row.quantity as number,
+    variantId: (row.variant_id as string) ?? undefined,
+    variant: variant
+      ? {
+          _id: variant.id as string,
+          color: (variant.color as string) ?? undefined,
+          storage: (variant.storage as string) ?? undefined,
+          price: (variant.price as number | null) ?? undefined,
+          stock: (variant.stock as number) ?? 0,
+          images: (variant.images as string[]) ?? [],
+        }
+      : undefined,
   };
 };
 
@@ -66,7 +89,7 @@ export const getUserCart = async (
 
     const { data, error, count } = await supabase
       .from("cart_items")
-      .select("product_id, quantity, product:products!cart_items_product_id_fkey(id, name, description, price, images, stock, average_rating, category_id, brand_id, created_at, updated_at)", { count: "exact" })
+      .select("product_id, quantity, variant_id, product:products!cart_items_product_id_fkey(id, name, description, price, images, stock, average_rating, category_id, brand_id, created_at, updated_at), variant:product_variants!cart_items_variant_id_fkey(id, color, storage, price, stock, images)", { count: "exact" })
       .eq("user_id", session.user.id)
       .range(from, to);
 
@@ -93,7 +116,8 @@ export const getUserCart = async (
 export const addToCart = async (
   _token: string,
   productId: string,
-  quantity: number = 1
+  quantity: number = 1,
+  variantId?: string
 ): Promise<CartResponse> => {
   try {
     const supabase = createClient();
@@ -101,8 +125,8 @@ export const addToCart = async (
     if (!session) return { success: false, cart: [], message: "Authentication required" };
 
     const { error } = await supabase.from("cart_items").upsert(
-      { user_id: session.user.id, product_id: productId, quantity },
-      { onConflict: "user_id,product_id" }
+      { user_id: session.user.id, product_id: productId, variant_id: variantId ?? null, quantity },
+      { onConflict: "user_id,product_id,variant_id" }
     );
     if (error) throw error;
 
@@ -116,18 +140,21 @@ export const addToCart = async (
 export const updateCartItem = async (
   _token: string,
   productId: string,
-  quantity: number
+  quantity: number,
+  variantId?: string
 ): Promise<CartResponse> => {
   try {
     const supabase = createClient();
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return { success: false, cart: [], message: "Authentication required" };
 
-    const { error } = await supabase
+    let query = supabase
       .from("cart_items")
       .update({ quantity })
       .eq("user_id", session.user.id)
       .eq("product_id", productId);
+    query = variantId ? query.eq("variant_id", variantId) : query.is("variant_id", null);
+    const { error } = await query;
     if (error) throw error;
 
     return getUserCart();
@@ -139,18 +166,21 @@ export const updateCartItem = async (
 
 export const removeFromCart = async (
   _token: string,
-  productId: string
+  productId: string,
+  variantId?: string
 ): Promise<CartResponse> => {
   try {
     const supabase = createClient();
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return { success: false, cart: [], message: "Authentication required" };
 
-    const { error } = await supabase
+    let query = supabase
       .from("cart_items")
       .delete()
       .eq("user_id", session.user.id)
       .eq("product_id", productId);
+    query = variantId ? query.eq("variant_id", variantId) : query.is("variant_id", null);
+    const { error } = await query;
     if (error) throw error;
 
     return getUserCart();

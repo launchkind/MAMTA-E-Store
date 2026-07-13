@@ -421,6 +421,11 @@ const SuccessPageContent = ({
                     <p className="text-sm font-medium text-foreground line-clamp-1">
                       {item.name}
                     </p>
+                    {item.variantLabel && (
+                      <p className="text-xs text-muted-foreground">
+                        {item.variantLabel}
+                      </p>
+                    )}
                     <p className="text-xs text-muted-foreground mt-0.5">
                       Qty {item.quantity} ×{" "}
                       <PriceFormatter amount={item.price} className="inline" />

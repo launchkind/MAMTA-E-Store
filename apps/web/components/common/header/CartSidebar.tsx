@@ -54,7 +54,8 @@ export default function CartSidebar() {
   }, [isOpen, auth_token, loadCartPage]);
 
   const subtotal = cartItemsWithQuantities.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
+    (sum, item) =>
+      sum + (item.variant?.price ?? item.product.price) * item.quantity,
     0,
   );
   const freeDeliveryThreshold = parseFloat(
@@ -68,22 +69,26 @@ export default function CartSidebar() {
   const tax = subtotal * taxRate;
   const total = subtotal + shipping + tax;
 
-  const handleQuantityChange = async (itemId: string, qty: number) => {
+  const handleQuantityChange = async (
+    itemId: string,
+    qty: number,
+    variantId?: string,
+  ) => {
     if (qty < 1) {
-      await handleRemove(itemId);
+      await handleRemove(itemId, variantId);
       return;
     }
     try {
-      await updateCartItemQuantity(itemId, qty);
+      await updateCartItemQuantity(itemId, qty, variantId);
     } catch {
       toast.error("Failed to update quantity");
     }
   };
 
-  const handleRemove = async (itemId: string) => {
-    setRemovingId(itemId);
+  const handleRemove = async (itemId: string, variantId?: string) => {
+    setRemovingId(`${itemId}-${variantId ?? ""}`);
     try {
-      await removeFromCart(itemId);
+      await removeFromCart(itemId, variantId);
       toast.success("Item removed");
     } catch {
       toast.error("Failed to remove item");
@@ -100,8 +105,10 @@ export default function CartSidebar() {
 
     redirectToWhatsAppOrder(
       cartItemsWithQuantities.map((item) => ({
-        name: item.product.name,
-        price: item.product.price,
+        name: [item.product.name, item.variant?.color, item.variant?.storage]
+          .filter(Boolean)
+          .join(" - "),
+        price: item.variant?.price ?? item.product.price,
         quantity: item.quantity,
         product: { _id: item.product._id, slug: item.product.slug },
       }))
@@ -221,9 +228,15 @@ export default function CartSidebar() {
             /* Cart items */
             <ul className="divide-y">
               <AnimatePresence initial={false}>
-                {cartItemsWithQuantities.map((item) => (
+                {cartItemsWithQuantities.map((item) => {
+                  const lineKey = `${item.product._id}-${item.variantId ?? ""}`;
+                  const linePrice = item.variant?.price ?? item.product.price;
+                  const variantLabel = [item.variant?.color, item.variant?.storage]
+                    .filter(Boolean)
+                    .join(" / ");
+                  return (
                   <motion.li
-                    key={item.product._id}
+                    key={lineKey}
                     layout
                     initial={{ opacity: 0, x: 40 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -239,7 +252,11 @@ export default function CartSidebar() {
                     >
                       <div className="w-[72px] h-[72px] rounded-lg border bg-muted overflow-hidden">
                         <Image
-                          src={item.product.images?.[0] || item.product.image}
+                          src={
+                            item.variant?.images?.[0] ||
+                            item.product.images?.[0] ||
+                            item.product.image
+                          }
                           alt={item.product.name}
                           width={72}
                           height={72}
@@ -258,9 +275,15 @@ export default function CartSidebar() {
                         {item.product.name}
                       </Link>
 
+                      {variantLabel && (
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          {variantLabel}
+                        </p>
+                      )}
+
                       <div className="mt-1">
                         <PriceFormatter
-                          amount={item.product.price}
+                          amount={linePrice}
                           className="text-sm text-muted-foreground"
                         />
                       </div>
@@ -273,6 +296,7 @@ export default function CartSidebar() {
                               handleQuantityChange(
                                 item.product._id,
                                 item.quantity - 1,
+                                item.variantId,
                               )
                             }
                             className="w-7 h-7 flex items-center justify-center text-muted-foreground hover:bg-muted transition-colors"
@@ -287,6 +311,7 @@ export default function CartSidebar() {
                               handleQuantityChange(
                                 item.product._id,
                                 item.quantity + 1,
+                                item.variantId,
                               )
                             }
                             className="w-7 h-7 flex items-center justify-center text-muted-foreground hover:bg-muted transition-colors"
@@ -296,12 +321,12 @@ export default function CartSidebar() {
                         </div>
 
                         <button
-                          onClick={() => handleRemove(item.product._id)}
-                          disabled={removingId === item.product._id}
+                          onClick={() => handleRemove(item.product._id, item.variantId)}
+                          disabled={removingId === lineKey}
                           className="text-muted-foreground hover:text-destructive transition-colors p-1 rounded"
                           aria-label="Remove item"
                         >
-                          {removingId === item.product._id ? (
+                          {removingId === lineKey ? (
                             <Loader2 className="size-3.5 animate-spin" />
                           ) : (
                             <Trash2 className="size-3.5" />
@@ -313,12 +338,13 @@ export default function CartSidebar() {
                     {/* Line subtotal */}
                     <div className="shrink-0 text-right">
                       <PriceFormatter
-                        amount={item.product.price * item.quantity}
+                        amount={linePrice * item.quantity}
                         className="text-sm font-semibold"
                       />
                     </div>
                   </motion.li>
-                ))}
+                  );
+                })}
               </AnimatePresence>
             </ul>
           )}

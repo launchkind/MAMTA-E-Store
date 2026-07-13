@@ -66,6 +66,7 @@ interface OrderItem {
   price: number; // Server field
   quantity: number;
   image?: string; // Server field
+  variantLabel?: string; // Server field
   product?: {
     // Frontend compatibility field
     _id: string;
@@ -379,7 +380,7 @@ export default function OrdersPage() {
         .select(
           `*,
           user:users!user_id(id, name, email, avatar),
-          order_items(id, product_id, name, price, quantity, image),
+          order_items(id, product_id, name, price, quantity, image, variant_label),
           packer:users!assigned_packer(id, name),
           deliveryman:users!assigned_deliveryman(id, name)`,
           { count: "exact" }
@@ -420,6 +421,7 @@ export default function OrdersPage() {
           price: item.price || 0,
           quantity: item.quantity || 1,
           image: item.image,
+          variantLabel: item.variant_label,
           product: {
             _id: item.product_id || "",
             name: item.name || "Unknown Product",
@@ -2929,6 +2931,9 @@ export default function OrdersPage() {
                                 item.name ||
                                 "Unknown Product"}
                             </p>
+                            {item.variantLabel && (
+                              <p className="text-xs text-gray-500">{item.variantLabel}</p>
+                            )}
                             <p className="text-sm text-gray-600">
                               Qty: {item.quantity || 1}
                             </p>
@@ -3897,6 +3902,9 @@ export default function OrdersPage() {
                                   item.name ||
                                   "Unknown Product"}
                               </p>
+                              {item.variantLabel && (
+                                <p className="text-xs text-gray-500">{item.variantLabel}</p>
+                              )}
                               <p className="text-sm text-gray-600">
                                 Qty: {item.quantity || 1}
                               </p>
