@@ -62,9 +62,14 @@ export const useAuthStore = create<AuthState>()(
       },
 
       login: async (email, password) => {
-        const { error } = await supabase.auth.signInWithPassword({ email, password })
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password })
         if (error) throw new Error(error.message)
-        // onAuthStateChange fires → setSession called automatically
+        // Set session synchronously so isAuthenticated is true before the caller navigates.
+        // onAuthStateChange will also fire and call setSession again, which is harmless.
+        await get().setSession(data.session)
+        if (!get().isAuthenticated) {
+          throw new Error('You do not have permission to access the admin dashboard.')
+        }
       },
 
       loginWithGoogle: async () => {
