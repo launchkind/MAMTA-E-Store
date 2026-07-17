@@ -195,6 +195,108 @@ const itemSlide = {
   },
 };
 
+// ── Floating-label input ───────────────────────────────────────────────────
+const Field = ({
+  id,
+  label,
+  type = "text",
+  value,
+  onChange,
+  disabled = false,
+  rightSlot,
+  required = true,
+}: {
+  id: string;
+  label: string;
+  type?: string;
+  value: string;
+  onChange: (v: string) => void;
+  disabled?: boolean;
+  rightSlot?: React.ReactNode;
+  required?: boolean;
+}) => (
+  <div className="relative">
+    <input
+      id={id}
+      type={type}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      required={required}
+      disabled={disabled}
+      placeholder=" "
+      className="peer w-full px-4 pt-5 pb-2 rounded-lg border border-border bg-background focus:border-primary focus:ring-1 focus:ring-primary/30 outline-none transition-all text-sm text-foreground placeholder-transparent disabled:opacity-60"
+    />
+    <label
+      htmlFor={id}
+      className="absolute left-4 top-4 text-sm text-muted-foreground transition-all duration-200
+        peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm
+        peer-focus:top-1.5 peer-focus:text-[10px] peer-focus:text-primary
+        peer-not-placeholder-shown:top-1.5 peer-not-placeholder-shown:text-[10px]"
+    >
+      {label} {required && <span className="text-destructive">*</span>}
+    </label>
+    {rightSlot && (
+      <div className="absolute right-3 top-1/2 -translate-y-1/2">
+        {rightSlot}
+      </div>
+    )}
+  </div>
+);
+
+const EyeToggle = ({
+  show,
+  toggle,
+}: {
+  show: boolean;
+  toggle: () => void;
+}) => (
+  <button
+    type="button"
+    onClick={toggle}
+    className="text-muted-foreground hover:text-foreground transition-colors p-0.5"
+  >
+    {show ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+  </button>
+);
+
+const Divider = ({ text = "OR" }: { text?: string }) => (
+  <div className="flex items-center gap-3">
+    <div className="flex-1 h-px bg-border" />
+    <span className="text-xs text-muted-foreground font-medium">{text}</span>
+    <div className="flex-1 h-px bg-border" />
+  </div>
+);
+
+// ── View animation wrapper ─────────────────────────────────────────────────
+const ViewWrap = ({ children }: { children: React.ReactNode }) => (
+  <motion.div
+    initial={{ opacity: 0, x: 20 }}
+    animate={{ opacity: 1, x: 0 }}
+    exit={{ opacity: 0, x: -20 }}
+    transition={{ duration: 0.2, ease: "easeOut" }}
+    className="flex flex-col gap-5"
+  >
+    {children}
+  </motion.div>
+);
+
+// ── Req indicator ──────────────────────────────────────────────────────────
+const Req = ({ met, text }: { met: boolean; text: string }) => (
+  <div className="flex items-center gap-1.5 text-xs">
+    <Check
+      className={`size-3 transition-colors ${met ? "text-green-500" : "text-muted-foreground/30"}`}
+    />
+    <span
+      className={`transition-colors ${met ? "text-green-600" : "text-muted-foreground"}`}
+    >
+      {text}
+    </span>
+  </div>
+);
+
+// ── OAuth section with stagger — disabled for now, Google/GitHub not needed for ordering ──
+const OAuthSection = (_props: { context: "login" | "register" }) => null;
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Main AuthSidebar component
 // ─────────────────────────────────────────────────────────────────────────────
@@ -260,80 +362,6 @@ const AuthSidebar = () => {
     }
   }, [isOpen, view]);
 
-  // ── Floating-label input ───────────────────────────────────────────────────
-  const Field = ({
-    id,
-    label,
-    type = "text",
-    value,
-    onChange,
-    disabled = false,
-    rightSlot,
-    required = true,
-  }: {
-    id: string;
-    label: string;
-    type?: string;
-    value: string;
-    onChange: (v: string) => void;
-    disabled?: boolean;
-    rightSlot?: React.ReactNode;
-    required?: boolean;
-  }) => (
-    <div className="relative">
-      <input
-        id={id}
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        required={required}
-        disabled={disabled}
-        placeholder=" "
-        className="peer w-full px-4 pt-5 pb-2 rounded-lg border border-border bg-background focus:border-primary focus:ring-1 focus:ring-primary/30 outline-none transition-all text-sm text-foreground placeholder-transparent disabled:opacity-60"
-      />
-      <label
-        htmlFor={id}
-        className="absolute left-4 top-4 text-sm text-muted-foreground transition-all duration-200
-          peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm
-          peer-focus:top-1.5 peer-focus:text-[10px] peer-focus:text-primary
-          peer-not-placeholder-shown:top-1.5 peer-not-placeholder-shown:text-[10px]"
-      >
-        {label} {required && <span className="text-destructive">*</span>}
-      </label>
-      {rightSlot && (
-        <div className="absolute right-3 top-1/2 -translate-y-1/2">
-          {rightSlot}
-        </div>
-      )}
-    </div>
-  );
-
-  const EyeToggle = ({
-    show,
-    toggle,
-  }: {
-    show: boolean;
-    toggle: () => void;
-  }) => (
-    <button
-      type="button"
-      onClick={toggle}
-      className="text-muted-foreground hover:text-foreground transition-colors p-0.5"
-    >
-      {show ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-    </button>
-  );
-
-  const Divider = ({ text = "OR" }: { text?: string }) => (
-    <div className="flex items-center gap-3">
-      <div className="flex-1 h-px bg-border" />
-      <span className="text-xs text-muted-foreground font-medium">{text}</span>
-      <div className="flex-1 h-px bg-border" />
-    </div>
-  );
-
-  // ── OAuth section with stagger — disabled for now, Google/GitHub not needed for ordering ──
-  const OAuthSection = (_props: { context: "login" | "register" }) => null;
   /* const OAuthSectionOriginal = ({ context }: { context: "login" | "register" }) => (
     <motion.div
       variants={staggerContainer}
@@ -358,33 +386,6 @@ const AuthSidebar = () => {
       </motion.div>
     </motion.div>
   ); */
-
-  // ── View animation wrapper ─────────────────────────────────────────────────
-  const ViewWrap = ({ children }: { children: React.ReactNode }) => (
-    <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      transition={{ duration: 0.2, ease: "easeOut" }}
-      className="flex flex-col gap-5"
-    >
-      {children}
-    </motion.div>
-  );
-
-  // ── Req indicator ──────────────────────────────────────────────────────────
-  const Req = ({ met, text }: { met: boolean; text: string }) => (
-    <div className="flex items-center gap-1.5 text-xs">
-      <Check
-        className={`size-3 transition-colors ${met ? "text-green-500" : "text-muted-foreground/30"}`}
-      />
-      <span
-        className={`transition-colors ${met ? "text-green-600" : "text-muted-foreground"}`}
-      >
-        {text}
-      </span>
-    </div>
-  );
 
   // ── Login ──────────────────────────────────────────────────────────────────
   const handleLogin = async (e: React.FormEvent) => {
@@ -735,11 +736,11 @@ const AuthSidebar = () => {
   const renderContent = () => {
     switch (currentView) {
       case "login":
-        return <LoginView />;
+        return LoginView();
       case "register":
-        return <RegisterView />;
+        return RegisterView();
       case "forgot-password":
-        return <ForgotView />;
+        return ForgotView();
     }
   };
 
