@@ -45,7 +45,7 @@ const Banner = async ({
           className="hidden lg:flex w-72 h-[400px] md:h-[500px] p-3"
         />
       )}
-      <div className="relative group overflow-hidden rounded-md flex-1 h-[400px] md:h-[500px] md:pl-5 pt-5">
+      <div className="relative group overflow-hidden rounded-xl flex-1 h-[400px] md:h-[430px] lg:h-[500px] lg:pl-5 pt-5">
         <BannerCarousel banners={banners} />
       </div>
     </div>

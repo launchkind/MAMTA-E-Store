@@ -60,7 +60,7 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
   };
 
   return (
-    <div className="relative w-full h-full overflow-hidden rounded-md bg-gray-100 group">
+    <div className="relative w-full h-full overflow-hidden rounded-xl group">
       <AnimatePresence mode="popLayout">
         {banners.map((banner, index) => {
           if (index !== currentIndex) return null;
@@ -70,13 +70,17 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
 
           const content = (
             <>
-              <Image
-                src={banner.image}
-                alt={banner.name || banner.title || "Banner"}
-                fill
-                priority={index === 0}
-                className="object-cover w-full h-full rounded-md"
-              />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Image
+                  src={banner.image}
+                  alt={banner.name || banner.title || "Banner"}
+                  width={1600}
+                  height={800}
+                  priority={index === 0}
+                  sizes="(max-width: 1024px) 100vw, 70vw"
+                  className="w-auto h-auto max-w-full max-h-full rounded-xl"
+                />
+              </div>
 
               <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center px-10 md:px-16 z-20">
                 <motion.div
