@@ -12,6 +12,7 @@ export interface Banner {
   title: string;
   startFrom: number;
   image: string;
+  mobileImage?: string;
   bannerType: string;
   sale?: string;
   value?: string;
@@ -70,7 +71,20 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
 
           const content = (
             <>
-              <div className="absolute inset-0 flex items-center justify-center">
+              {/* Mobile banner image — full-bleed fill, no letterboxing (falls back to desktop image if none set) */}
+              <div className="absolute inset-0 block md:hidden">
+                <Image
+                  src={banner.mobileImage || banner.image}
+                  alt={banner.name || banner.title || "Banner"}
+                  fill
+                  priority={index === 0}
+                  sizes="100vw"
+                  className="object-cover rounded-xl"
+                />
+              </div>
+
+              {/* Tablet / desktop banner image — shown in full, no cropping */}
+              <div className="absolute inset-0 hidden md:flex items-center justify-center">
                 <Image
                   src={banner.image}
                   alt={banner.name || banner.title || "Banner"}

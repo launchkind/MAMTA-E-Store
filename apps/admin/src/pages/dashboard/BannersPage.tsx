@@ -77,6 +77,7 @@ type Banner = {
   title?: string;
   subtitle?: string;
   image: string;
+  mobile_image?: string;
   link?: string;
   show_button: boolean;
   is_active: boolean;
@@ -88,6 +89,7 @@ const bannerSchema = z.object({
   title: z.string().optional(),
   subtitle: z.string().optional(),
   image: z.string().min(1, "Image is required"),
+  mobile_image: z.string().optional(),
   link: z.string().optional(),
   show_button: z.boolean().default(true),
   is_active: z.boolean().default(true),
@@ -131,6 +133,7 @@ export default function BannersPage() {
       title: "",
       subtitle: "",
       image: "",
+      mobile_image: "",
       link: "",
       show_button: true,
       is_active: true,
@@ -144,6 +147,7 @@ export default function BannersPage() {
       title: "",
       subtitle: "",
       image: "",
+      mobile_image: "",
       link: "",
       show_button: true,
       is_active: true,
@@ -182,6 +186,7 @@ export default function BannersPage() {
           title: row.title as string | undefined,
           subtitle: row.subtitle as string | undefined,
           image: row.image as string,
+          mobile_image: row.mobile_image as string | undefined,
           link: row.link as string | undefined,
           show_button: (row.show_button as boolean) ?? true,
           is_active: row.is_active as boolean,
@@ -253,6 +258,7 @@ export default function BannersPage() {
       title: banner.title || "",
       subtitle: banner.subtitle || "",
       image: banner.image,
+      mobile_image: banner.mobile_image || "",
       link: banner.link || "",
       show_button: banner.show_button ?? true,
       is_active: banner.is_active,
@@ -275,6 +281,7 @@ export default function BannersPage() {
           title: data.title || null,
           subtitle: data.subtitle || null,
           image: data.image,
+          mobile_image: data.mobile_image || null,
           link: data.link || null,
           show_button: data.show_button,
           is_active: data.is_active,
@@ -314,6 +321,7 @@ export default function BannersPage() {
           title: data.title || null,
           subtitle: data.subtitle || null,
           image: data.image,
+          mobile_image: data.mobile_image || null,
           link: data.link || null,
           show_button: data.show_button,
           is_active: data.is_active,
@@ -933,10 +941,36 @@ export default function BannersPage() {
                 name="image"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Banner Image *</FormLabel>
+                    <FormLabel>Desktop / Tablet Banner Image *</FormLabel>
+                    <FormDescription>
+                      Recommended size: <strong>1600 × 800px</strong> (2:1
+                      ratio). Used on tablet and desktop screens.
+                    </FormDescription>
                     <FormControl>
                       <ImageUpload
                         value={field.value}
+                        onChange={field.onChange}
+                        disabled={formLoading}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={formAdd.control}
+                name="mobile_image"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Mobile Banner Image</FormLabel>
+                    <FormDescription>
+                      Recommended size: <strong>1080 × 1350px</strong> (4:5
+                      ratio). Shown on mobile screens only — if left empty,
+                      the desktop image above is used instead.
+                    </FormDescription>
+                    <FormControl>
+                      <ImageUpload
+                        value={field.value || ""}
                         onChange={field.onChange}
                         disabled={formLoading}
                       />
@@ -1103,10 +1137,36 @@ export default function BannersPage() {
                 name="image"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Banner Image *</FormLabel>
+                    <FormLabel>Desktop / Tablet Banner Image *</FormLabel>
+                    <FormDescription>
+                      Recommended size: <strong>1600 × 800px</strong> (2:1
+                      ratio). Used on tablet and desktop screens.
+                    </FormDescription>
                     <FormControl>
                       <ImageUpload
                         value={field.value}
+                        onChange={field.onChange}
+                        disabled={formLoading}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={formEdit.control}
+                name="mobile_image"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Mobile Banner Image</FormLabel>
+                    <FormDescription>
+                      Recommended size: <strong>1080 × 1350px</strong> (4:5
+                      ratio). Shown on mobile screens only — if left empty,
+                      the desktop image above is used instead.
+                    </FormDescription>
+                    <FormControl>
+                      <ImageUpload
+                        value={field.value || ""}
                         onChange={field.onChange}
                         disabled={formLoading}
                       />
