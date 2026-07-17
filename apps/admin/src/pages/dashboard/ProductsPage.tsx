@@ -1294,7 +1294,7 @@ export default function ProductsPage() {
                           </TableCell>
 
                           <TableCell className="font-semibold text-green-600 whitespace-nowrap">
-                            ${product.price.toFixed(2)}
+                            ₹{product.price.toFixed(2)}
                           </TableCell>
                           <TableCell>
                             <span className="inline-flex items-center rounded-full bg-orange-100 px-2 py-1 text-xs font-medium text-orange-800 whitespace-nowrap">
@@ -1571,7 +1571,7 @@ export default function ProductsPage() {
 
                           <div className="mt-1 flex items-center gap-2">
                             <span className="font-bold text-base sm:text-lg text-primary">
-                              ${product.price?.toFixed(2) || "0.00"}
+                              ₹{product.price?.toFixed(2) || "0.00"}
                             </span>
                             {product.discountPercentage > 0 && (
                               <span className="text-[10px] sm:text-xs font-medium bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded-full">

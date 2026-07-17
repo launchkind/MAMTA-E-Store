@@ -200,7 +200,7 @@ export default function SalariesPage() {
                       {salary.employee.employee_role.replace("_", " ")}
                     </TableCell>
                     <TableCell className="font-semibold text-green-600">
-                      ${salary.amount.toFixed(2)}
+                      ₹{salary.amount.toFixed(2)}
                     </TableCell>
                     <TableCell>
                       {salary.month} {salary.year}

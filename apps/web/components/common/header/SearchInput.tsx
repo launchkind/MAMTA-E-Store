@@ -597,11 +597,11 @@ const SearchInput = ({
                                 </p>
                                 <div className="flex items-center gap-1.5 mt-1">
                                   <span className="text-sm font-bold text-accent">
-                                    ${cp.toFixed(2)}
+                                    ₹{cp.toFixed(2)}
                                   </span>
                                   {hasDiscount && (
                                     <span className="text-xs text-muted-foreground line-through">
-                                      ${product.price.toFixed(2)}
+                                      ₹{product.price.toFixed(2)}
                                     </span>
                                   )}
                                 </div>
@@ -804,12 +804,12 @@ const SearchInput = ({
                         {/* Price row */}
                         <div className="flex items-center gap-2 mt-0.5">
                           <span className="text-[15px] font-bold text-accent">
-                            ${cp.toFixed(2)}
+                            ₹{cp.toFixed(2)}
                           </span>
                           {hasDiscount && (
                             <>
                               <span className="text-xs text-muted-foreground line-through">
-                                ${product.price.toFixed(2)}
+                                ₹{product.price.toFixed(2)}
                               </span>
                               <span className="text-[10px] font-bold bg-accent/10 text-accent px-1.5 py-0.5 rounded-full">
                                 -{product.discountPercentage}%

@@ -92,7 +92,7 @@ const ProductActions: React.FC<ProductActionsProps> = ({ product }) => {
           />
           {selectedVariant?.price != null && (
             <p className="text-2xl font-bold text-foreground">
-              ${effectivePrice.toFixed(2)}
+              ₹{effectivePrice.toFixed(2)}
             </p>
           )}
         </div>

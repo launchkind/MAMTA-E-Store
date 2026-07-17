@@ -774,20 +774,20 @@ export const loadAllUserData = async (token: string) => {
 export const useCurrencyStore = create<CurrencyState>()(
   persist(
     (set, get) => ({
-      selectedCurrency: "USD",
+      selectedCurrency: "INR",
       currencies: [
-        { code: "USD", name: "US Dollar", symbol: "$", rate: 1.0 },
-        { code: "EUR", name: "Euro", symbol: "€", rate: 0.85 },
-        { code: "GBP", name: "British Pound", symbol: "£", rate: 0.73 },
-        { code: "JPY", name: "Japanese Yen", symbol: "¥", rate: 110.0 },
-        { code: "CAD", name: "Canadian Dollar", symbol: "C$", rate: 1.25 },
-        { code: "AUD", name: "Australian Dollar", symbol: "A$", rate: 1.35 },
-        { code: "CHF", name: "Swiss Franc", symbol: "CHF", rate: 0.92 },
-        { code: "CNY", name: "Chinese Yuan", symbol: "¥", rate: 6.45 },
-        { code: "INR", name: "Indian Rupee", symbol: "₹", rate: 74.5 },
-        { code: "BDT", name: "Bangladeshi Taka", symbol: "৳", rate: 84.8 },
-        { code: "KRW", name: "South Korean Won", symbol: "₩", rate: 1180.0 },
-        { code: "SGD", name: "Singapore Dollar", symbol: "S$", rate: 1.35 },
+        { code: "INR", name: "Indian Rupee", symbol: "₹", rate: 1.0 },
+        { code: "USD", name: "US Dollar", symbol: "$", rate: 1 / 74.5 },
+        { code: "EUR", name: "Euro", symbol: "€", rate: 0.85 / 74.5 },
+        { code: "GBP", name: "British Pound", symbol: "£", rate: 0.73 / 74.5 },
+        { code: "JPY", name: "Japanese Yen", symbol: "¥", rate: 110.0 / 74.5 },
+        { code: "CAD", name: "Canadian Dollar", symbol: "C$", rate: 1.25 / 74.5 },
+        { code: "AUD", name: "Australian Dollar", symbol: "A$", rate: 1.35 / 74.5 },
+        { code: "CHF", name: "Swiss Franc", symbol: "CHF", rate: 0.92 / 74.5 },
+        { code: "CNY", name: "Chinese Yuan", symbol: "¥", rate: 6.45 / 74.5 },
+        { code: "BDT", name: "Bangladeshi Taka", symbol: "৳", rate: 84.8 / 74.5 },
+        { code: "KRW", name: "South Korean Won", symbol: "₩", rate: 1180.0 / 74.5 },
+        { code: "SGD", name: "Singapore Dollar", symbol: "S$", rate: 1.35 / 74.5 },
       ],
       setCurrency: (currencyCode: string) => {
         set({ selectedCurrency: currencyCode });

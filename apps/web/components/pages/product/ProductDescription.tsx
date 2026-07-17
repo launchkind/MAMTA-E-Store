@@ -178,7 +178,7 @@ const ProductDescription = ({
                   Price
                 </span>
                 <span className="text-foreground font-semibold text-lg">
-                  ${product?.price || "N/A"}
+                  ₹{product?.price || "N/A"}
                 </span>
               </div>
               {product?.originalPrice && (

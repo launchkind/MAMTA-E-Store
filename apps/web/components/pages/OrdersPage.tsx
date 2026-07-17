@@ -98,7 +98,7 @@ const PAYMENT_STATUS_CONFIG: Record<
 };
 
 const formatPrice = (p: number) =>
-  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(
+  new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(
     p,
   );
 

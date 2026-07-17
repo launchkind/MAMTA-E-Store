@@ -15,12 +15,15 @@ const PriceFormatter = ({ amount, className }: Props) => {
   const currency = getCurrentCurrency();
   const convertedAmount = convertPrice(amount);
 
-  const formattedPrice = new Number(convertedAmount).toLocaleString("en-US", {
-    currency: currency.code,
-    style: "currency",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
+  const formattedPrice = new Number(convertedAmount).toLocaleString(
+    currency.code === "INR" ? "en-IN" : "en-US",
+    {
+      currency: currency.code,
+      style: "currency",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    },
+  );
 
   return (
     <span

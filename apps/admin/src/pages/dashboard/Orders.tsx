@@ -1733,7 +1733,7 @@ export default function OrdersPage() {
                           </div>
                           <div className="text-right">
                             <p className="text-lg font-bold">
-                              ${collection.amount.toFixed(2)}
+                              ₹{collection.amount.toFixed(2)}
                             </p>
                           </div>
                         </div>
@@ -1827,7 +1827,7 @@ export default function OrdersPage() {
                   </div>
                   <div className="mt-4">
                     <p className="text-4xl font-bold text-green-700">
-                      ${accountsStats?.totalReceived.toFixed(2) || "0.00"}
+                      ₹{accountsStats?.totalReceived.toFixed(2) || "0.00"}
                     </p>
                     <p className="text-sm text-green-600 mt-2">
                       From {accountsStats?.totalReceivedCount || 0} confirmed
@@ -1849,7 +1849,7 @@ export default function OrdersPage() {
                         Pending to Receive
                       </p>
                       <p className="text-2xl font-bold text-orange-700">
-                        ${accountsStats?.totalPending.toFixed(2) || "0.00"}
+                        ₹{accountsStats?.totalPending.toFixed(2) || "0.00"}
                       </p>
                       <p className="text-xs text-gray-500">
                         {accountsStats?.totalPendingCount || 0} order(s) with
@@ -1889,7 +1889,7 @@ export default function OrdersPage() {
                     <div>
                       <p className="text-sm text-gray-600">Confirmed</p>
                       <p className="text-2xl font-bold text-green-700">
-                        ${accountsStats?.totalReceived.toFixed(2) || "0.00"}
+                        ₹{accountsStats?.totalReceived.toFixed(2) || "0.00"}
                       </p>
                       <p className="text-xs text-gray-500">
                         {accountsStats?.totalReceivedCount || 0} confirmed
@@ -2037,7 +2037,7 @@ export default function OrdersPage() {
                               </div>
                               <div className="text-right">
                                 <p className="text-xl font-bold text-purple-700">
-                                  ${submission.amount.toFixed(2)}
+                                  ₹{submission.amount.toFixed(2)}
                                 </p>
                               </div>
                             </div>
@@ -2103,7 +2103,7 @@ export default function OrdersPage() {
                         </div>
                         <div className="text-right">
                           <p className="text-xl font-bold text-green-700">
-                            ${submission.amount.toFixed(2)}
+                            ₹{submission.amount.toFixed(2)}
                           </p>
                         </div>
                       </div>
@@ -2340,7 +2340,7 @@ export default function OrdersPage() {
                             {order.items?.length || 0} items
                           </TableCell>
                           <TableCell className="font-medium">
-                            ${(order.totalAmount || 0).toFixed(2)}
+                            ₹{(order.totalAmount || 0).toFixed(2)}
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
@@ -2645,7 +2645,7 @@ export default function OrdersPage() {
                             Total
                           </p>
                           <p className="font-bold text-lg">
-                            ${(order.totalAmount || 0).toFixed(2)}
+                            ₹{(order.totalAmount || 0).toFixed(2)}
                           </p>
                         </div>
                       </div>
@@ -2940,7 +2940,7 @@ export default function OrdersPage() {
                           </div>
                         </div>
                         <p className="font-medium">
-                          ${(item.product?.price || item.price || 0).toFixed(2)}
+                          ₹{(item.product?.price || item.price || 0).toFixed(2)}
                         </p>
                       </div>
                     ))
@@ -2953,7 +2953,7 @@ export default function OrdersPage() {
               <div className="flex justify-between items-center pt-4 border-t">
                 <span className="text-lg font-semibold">Total Amount:</span>
                 <span className="text-2xl font-bold text-blue-600">
-                  ${selectedOrder.totalAmount.toFixed(2)}
+                  ₹{selectedOrder.totalAmount.toFixed(2)}
                 </span>
               </div>
             </div>
@@ -3722,7 +3722,7 @@ export default function OrdersPage() {
                                 </div>
                               </div>
                               <p className="font-medium">
-                                ${(Number(product.price) || 0).toFixed(2)}
+                                ₹{(Number(product.price) || 0).toFixed(2)}
                               </p>
                             </div>
                           ))}
@@ -3928,7 +3928,7 @@ export default function OrdersPage() {
               <div className="flex justify-between items-center pt-4 border-t">
                 <span className="text-lg font-semibold">Total Amount:</span>
                 <span className="text-2xl font-bold text-blue-600">
-                  ${selectedOrder.totalAmount.toFixed(2)}
+                  ₹{selectedOrder.totalAmount.toFixed(2)}
                 </span>
               </div>
 

@@ -334,7 +334,7 @@ export default function InvoicePage() {
                     <div className="flex items-center gap-2">
                       <Badge variant="secondary">{r.status}</Badge>
                       <span className="font-medium text-sm">
-                        ${r.total.toFixed(2)}
+                        ₹{r.total.toFixed(2)}
                       </span>
                     </div>
                   </button>

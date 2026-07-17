@@ -162,10 +162,10 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ invoiceData }) => {
                   {item.quantity}
                 </td>
                 <td className="border border-gray-300 px-4 py-3 text-right text-gray-800">
-                  ${item.price.toFixed(2)}
+                  ₹{item.price.toFixed(2)}
                 </td>
                 <td className="border border-gray-300 px-4 py-3 text-right text-gray-800">
-                  ${(item.quantity * item.price).toFixed(2)}
+                  ₹{(item.quantity * item.price).toFixed(2)}
                 </td>
               </tr>
             ))}
@@ -180,22 +180,22 @@ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ invoiceData }) => {
             <div className="flex justify-between py-2">
               <span className="text-gray-600">Subtotal:</span>
               <span className="text-gray-800">
-                ${order.totalAmount.toFixed(2)}
+                ₹{order.totalAmount.toFixed(2)}
               </span>
             </div>
             <div className="flex justify-between py-2">
               <span className="text-gray-600">Tax:</span>
-              <span className="text-gray-800">$0.00</span>
+              <span className="text-gray-800">₹0.00</span>
             </div>
             <div className="flex justify-between py-2">
               <span className="text-gray-600">Shipping:</span>
-              <span className="text-gray-800">$0.00</span>
+              <span className="text-gray-800">₹0.00</span>
             </div>
             <div className="border-t border-gray-300 pt-2">
               <div className="flex justify-between py-2 text-lg font-bold">
                 <span className="text-gray-800">Total:</span>
                 <span className="text-gray-800">
-                  ${order.totalAmount.toFixed(2)}
+                  ₹{order.totalAmount.toFixed(2)}
                 </span>
               </div>
             </div>

@@ -303,7 +303,7 @@ export default function OrderDetailSidebar({
                   Total Amount
                 </span>
                 <span className="font-semibold text-lg">
-                  ${(order.totalAmount || order.total || 0).toFixed(2)}
+                  ₹{(order.totalAmount || order.total || 0).toFixed(2)}
                 </span>
               </div>
               <div className="flex items-center gap-2 pt-2">
@@ -368,12 +368,12 @@ export default function OrderDetailSidebar({
                           <p className="text-xs text-muted-foreground">{item.variantLabel}</p>
                         )}
                         <p className="text-sm text-muted-foreground">
-                          ${itemPrice.toFixed(2)} × {item.quantity}
+                          ₹{itemPrice.toFixed(2)} × {item.quantity}
                         </p>
                       </div>
                       <div className="text-right">
                         <p className="font-semibold">
-                          ${(itemPrice * item.quantity).toFixed(2)}
+                          ₹{(itemPrice * item.quantity).toFixed(2)}
                         </p>
                       </div>
                     </div>

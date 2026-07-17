@@ -20,7 +20,7 @@ import { getOrderById, Order } from "@/lib/orderApi";
 import { useUserStore } from "@/lib/store";
 
 const formatPrice = (p: number) =>
-  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(p);
+  new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(p);
 
 const formatDateTime = (d: string) =>
   new Date(d).toLocaleDateString("en-US", {

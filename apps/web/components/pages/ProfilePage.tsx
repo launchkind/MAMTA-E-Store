@@ -1019,7 +1019,7 @@ const ProfilePage = () => {
                             {order.items.length > 1 ? "s" : ""}
                           </span>
                           <span className="font-semibold text-gray-900">
-                            ${order.total.toFixed(2)}
+                            ₹{order.total.toFixed(2)}
                           </span>
                         </div>
                       </div>

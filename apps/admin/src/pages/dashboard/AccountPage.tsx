@@ -44,7 +44,7 @@ interface ProductRow {
 const COLORS = ["#1a1a2c", "#d52245", "#1f2329", "#999999", "#fbe9ec", "#6366f1", "#22c55e"];
 
 const formatCurrency = (amount: number) =>
-  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount);
+  new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(amount);
 
 export default function AccountPage() {
   const [orders, setOrders] = useState<OrderRow[]>([]);

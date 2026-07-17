@@ -138,7 +138,7 @@ export default function SearchPage() {
           _id: p.id,
           type: "product" as const,
           displayText: p.name ?? p.slug ?? p.id,
-          subText: p.price != null ? `$${p.price}` : p.slug ?? "",
+          subText: p.price != null ? `₹${p.price}` : p.slug ?? "",
           route: `/dashboard/products/${p.id}`,
         }));
       }

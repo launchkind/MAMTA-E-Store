@@ -620,7 +620,7 @@ export function BulkUploadModal({
                       <TableCell className="max-w-[200px] truncate">
                         {product.name}
                       </TableCell>
-                      <TableCell>${product.price}</TableCell>
+                      <TableCell>₹{product.price}</TableCell>
                       <TableCell>{product.stock}</TableCell>
                       <TableCell>{product.category}</TableCell>
                       <TableCell>{product.brand}</TableCell>
