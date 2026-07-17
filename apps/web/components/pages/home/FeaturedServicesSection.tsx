@@ -9,7 +9,7 @@ import {
   HeartHandshake,
   Award,
   Users,
-  Clock,
+  BadgeCheck,
   Star,
 } from "lucide-react";
 import Link from "next/link";
@@ -58,9 +58,9 @@ const FeaturedServicesSection = () => {
       label: "Satisfaction Rate",
     },
     {
-      icon: <Clock className="w-6 h-6" />,
-      number: "24/7",
-      label: "Customer Support",
+      icon: <BadgeCheck className="w-6 h-6" />,
+      number: "100%",
+      label: "Genuine Products",
     },
     {
       icon: <Star className="w-6 h-6" />,

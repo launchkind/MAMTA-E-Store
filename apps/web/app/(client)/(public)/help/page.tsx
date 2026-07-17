@@ -57,7 +57,7 @@ const HelpPage = () => {
     {
       title: "Live Chat",
       description: "Chat with our support team",
-      availability: "24/7 Available",
+      availability: "Mon-Sun, 9AM-9PM",
       icon: <MessageCircle size={24} />,
       action: "Start Chat",
       primary: true,

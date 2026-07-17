@@ -22,7 +22,7 @@ const ContactPage = () => {
       icon: <Mail size={32} />,
       primary: "mamtaestore@gmail.com",
       secondary: "Response within 24 hours",
-      hours: "24/7 - We'll get back to you soon",
+      hours: "Monday - Saturday: 9:00 AM - 7:00 PM EST",
       description:
         "Send us an email for detailed questions or non-urgent matters",
     },

@@ -242,9 +242,9 @@ const OthersPage = () => {
               </div>
               <div>
                 <div className="text-3xl font-bold text-primary mb-2">
-                  24/7
+                  4.9★
                 </div>
-                <div className="text-gray-600 text-sm">Customer Support</div>
+                <div className="text-gray-600 text-sm">Average Rating</div>
               </div>
               <div>
                 <div className="text-3xl font-bold text-primary mb-2">

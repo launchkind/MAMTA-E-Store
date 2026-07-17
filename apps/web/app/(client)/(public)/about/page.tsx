@@ -100,9 +100,9 @@ const AboutPage = () => {
                   <div className="flex items-start gap-3">
                     <div className="w-2 h-2 bg-primary rounded-full mt-2"></div>
                     <div>
-                      <h3 className="font-semibold">24/7 Support</h3>
+                      <h3 className="font-semibold">Secure Payments</h3>
                       <p className="text-gray-600 text-sm">
-                        Dedicated customer success team ready to help anytime
+                        Safe and encrypted checkout on every order
                       </p>
                     </div>
                   </div>

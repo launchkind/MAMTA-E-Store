@@ -385,7 +385,7 @@ const TrackOrderClient = () => {
             </h3>
             <p className="text-gray-600 mb-6 max-w-lg mx-auto">
               Can&apos;t find your order or have questions about courier routes?
-              Our support team is here to help 24/7.
+              Our support team is here to help.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
