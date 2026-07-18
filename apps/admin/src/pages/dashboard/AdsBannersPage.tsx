@@ -28,6 +28,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Table,
   TableBody,
   TableCell,
@@ -71,6 +78,7 @@ type AdsBanner = {
   position?: string;
   is_active: boolean;
   sort_order: number;
+  end_time?: string;
   created_at: string;
 };
 
@@ -81,9 +89,19 @@ const adsBannerSchema = z.object({
   position: z.string().optional(),
   is_active: z.boolean().default(true),
   sort_order: z.coerce.number().min(0).default(0),
+  end_time: z.string().optional(),
 });
 
 type FormData = z.infer<typeof adsBannerSchema>;
+
+// Converts an ISO timestamp to the `YYYY-MM-DDTHH:mm` shape <input type="datetime-local"> expects.
+const toDatetimeLocal = (iso: string) => {
+  const d = new Date(iso);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(
+    d.getHours()
+  )}:${pad(d.getMinutes())}`;
+};
 
 export default function AdsBannersPage() {
   const [banners, setBanners] = useState<AdsBanner[]>([]);
@@ -108,6 +126,7 @@ export default function AdsBannersPage() {
       position: "",
       is_active: true,
       sort_order: 0,
+      end_time: "",
     },
   });
 
@@ -133,6 +152,7 @@ export default function AdsBannersPage() {
           position: row.position as string | undefined,
           is_active: row.is_active as boolean,
           sort_order: row.sort_order as number,
+          end_time: row.end_time as string | undefined,
           created_at: row.created_at as string,
         })
       );
@@ -172,6 +192,7 @@ export default function AdsBannersPage() {
           position: data.position || null,
           is_active: data.is_active,
           sort_order: data.sort_order,
+          end_time: data.end_time ? new Date(data.end_time).toISOString() : null,
         })
         .select()
         .single();
@@ -210,6 +231,7 @@ export default function AdsBannersPage() {
           position: data.position || null,
           is_active: data.is_active,
           sort_order: data.sort_order,
+          end_time: data.end_time ? new Date(data.end_time).toISOString() : null,
         })
         .eq("id", selectedBanner._id)
         .select()
@@ -437,11 +459,11 @@ export default function AdsBannersPage() {
                     </TableCell>
                     <TableCell className="font-medium">{banner.title}</TableCell>
                     <TableCell>
-                      {banner.position ? (
-                        <Badge variant="outline">{banner.position}</Badge>
-                      ) : (
-                        <span className="text-muted-foreground text-xs">—</span>
-                      )}
+                      <Badge variant="outline">
+                        {banner.position === "sidebar"
+                          ? "Sidebar Countdown"
+                          : "Main Carousel"}
+                      </Badge>
                     </TableCell>
                     <TableCell>{banner.sort_order}</TableCell>
                     <TableCell>
@@ -482,6 +504,9 @@ export default function AdsBannersPage() {
                                 position: banner.position || "",
                                 is_active: banner.is_active,
                                 sort_order: banner.sort_order || 0,
+                                end_time: banner.end_time
+                                  ? toDatetimeLocal(banner.end_time)
+                                  : "",
                               });
                               setIsEditModalOpen(true);
                             }}
@@ -582,16 +607,30 @@ export default function AdsBannersPage() {
                 name="position"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Position</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="e.g. homepage-top, sidebar"
-                        disabled={formLoading}
-                      />
-                    </FormControl>
+                    <FormLabel>Where should this show?</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value || "carousel"}
+                      disabled={formLoading}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select placement" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="carousel">
+                          Main Ads Carousel (left, big banner)
+                        </SelectItem>
+                        <SelectItem value="sidebar">
+                          Sidebar Countdown Card (right, &quot;Cyber Sale&quot; style)
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
                     <FormDescription>
-                      Where this banner should appear on the site
+                      Choose &quot;Sidebar Countdown Card&quot; to make this
+                      banner drive the pink flash-deal card with the
+                      countdown timer next to the main homepage banner.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -613,6 +652,28 @@ export default function AdsBannersPage() {
                     </FormControl>
                     <FormDescription>
                       Lower numbers appear first
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={formAdd.control}
+                name="end_time"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Countdown Ends At</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="datetime-local"
+                        {...field}
+                        disabled={formLoading}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      For the sidebar flash-deal banner: the live countdown
+                      runs until this date & time. Leave empty to hide the
+                      countdown.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -731,16 +792,30 @@ export default function AdsBannersPage() {
                 name="position"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Position</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="e.g. homepage-top, sidebar"
-                        disabled={formLoading}
-                      />
-                    </FormControl>
+                    <FormLabel>Where should this show?</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value || "carousel"}
+                      disabled={formLoading}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select placement" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="carousel">
+                          Main Ads Carousel (left, big banner)
+                        </SelectItem>
+                        <SelectItem value="sidebar">
+                          Sidebar Countdown Card (right, &quot;Cyber Sale&quot; style)
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
                     <FormDescription>
-                      Where this banner should appear on the site
+                      Choose &quot;Sidebar Countdown Card&quot; to make this
+                      banner drive the pink flash-deal card with the
+                      countdown timer next to the main homepage banner.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -762,6 +837,28 @@ export default function AdsBannersPage() {
                     </FormControl>
                     <FormDescription>
                       Lower numbers appear first
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={formEdit.control}
+                name="end_time"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Countdown Ends At</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="datetime-local"
+                        {...field}
+                        disabled={formLoading}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      For the sidebar flash-deal banner: the live countdown
+                      runs until this date & time. Leave empty to hide the
+                      countdown.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

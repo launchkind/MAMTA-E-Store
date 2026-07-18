@@ -15,6 +15,7 @@ interface AdsBanner {
   image: string;
   link?: string;
   bannerType: string;
+  endTime?: string;
 }
 
 interface AdsSideBannerProps {
@@ -38,8 +39,8 @@ const AdsSideBanner = ({ className }: AdsSideBannerProps) => {
     seconds: 0,
   });
 
+  // Fetch banner data from Supabase
   useEffect(() => {
-    // 1. Fetch Banner Data from Supabase
     const fetchBannerData = async () => {
       try {
         const { createClient } = await import("@supabase/supabase-js");
@@ -49,7 +50,7 @@ const AdsSideBanner = ({ className }: AdsSideBannerProps) => {
         );
         const { data } = await client
           .from("ads_banners")
-          .select("id, title, image, link, position")
+          .select("id, title, image, link, position, end_time")
           .eq("is_active", true)
           .eq("position", "sidebar")
           .order("sort_order")
@@ -64,6 +65,7 @@ const AdsSideBanner = ({ className }: AdsSideBannerProps) => {
             image: data.image,
             link: data.link ?? undefined,
             bannerType: "offer",
+            endTime: data.end_time ?? undefined,
           });
         }
       } catch {
@@ -74,13 +76,18 @@ const AdsSideBanner = ({ className }: AdsSideBannerProps) => {
     };
 
     fetchBannerData();
+  }, []);
 
-    // 2. Setup standard 30-day countdown timer for "Cyber Sale" look
-    const targetDate = new Date();
-    targetDate.setDate(targetDate.getDate() + 237); // Set to 237 days from now like Figma
+  // Live countdown to the admin-set end time (falls back to 237 days from now if unset)
+  useEffect(() => {
+    if (loading) return;
 
-    const timer = setInterval(() => {
-      const difference = targetDate.getTime() - new Date().getTime();
+    const targetDate = banner?.endTime
+      ? new Date(banner.endTime)
+      : new Date(Date.now() + 237 * 24 * 60 * 60 * 1000);
+
+    const updateTimeLeft = () => {
+      const difference = targetDate.getTime() - Date.now();
 
       if (difference > 0) {
         setTimeLeft({
@@ -90,12 +97,15 @@ const AdsSideBanner = ({ className }: AdsSideBannerProps) => {
           seconds: Math.floor((difference / 1000) % 60),
         });
       } else {
-        clearInterval(timer);
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
       }
-    }, 1000);
+    };
+
+    updateTimeLeft();
+    const timer = setInterval(updateTimeLeft, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [loading, banner?.endTime]);
 
   if (loading) {
     return (
@@ -115,6 +125,7 @@ const AdsSideBanner = ({ className }: AdsSideBannerProps) => {
   const bannerDesc =
     banner?.description || "20% Off when buying and paying online";
   const bannerLink = banner?.link || "/shop";
+  const bannerImage = banner?.image || adsBannerImage;
 
   return (
     <div
@@ -141,12 +152,14 @@ const AdsSideBanner = ({ className }: AdsSideBannerProps) => {
         <TimeBlock value={timeLeft.seconds} label="SECS" />
       </div>
 
-      {/* Static Image Background & Clickable Overlay */}
+      {/* Banner Image Background & Clickable Overlay */}
       <div className="absolute inset-x-0 bottom-0 h-2/3 select-none pointer-events-none">
         <Image
-          src={adsBannerImage}
-          alt="Sale Banner Promotion"
-          className="object-contain object-bottom w-full h-full"
+          src={bannerImage}
+          alt={bannerTitle}
+          fill
+          sizes="(max-width: 1024px) 100vw, 33vw"
+          className="object-contain object-bottom"
           priority
         />
       </div>
