@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { r2, R2_BUCKET, r2PublicUrl } from "@/lib/r2/client";
+import { getR2Client, getR2Bucket, r2PublicUrl } from "@/lib/r2/client";
 import { authorizeAdminOrStaff } from "@/lib/r2/authorize-admin";
 import { corsHeaders } from "@/lib/r2/cors";
 
@@ -61,7 +61,8 @@ export async function POST(request: Request) {
     const ext = EXT_BY_MIME[contentType];
     const key = `${folder}/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
 
-    const command = new PutObjectCommand({ Bucket: R2_BUCKET, Key: key, ContentType: contentType });
+    const r2 = getR2Client();
+    const command = new PutObjectCommand({ Bucket: getR2Bucket(), Key: key, ContentType: contentType });
     const uploadUrl = await getSignedUrl(r2, command, { expiresIn: 300 });
 
     return NextResponse.json({ success: true, uploadUrl, key, publicUrl: r2PublicUrl(key) }, { headers });

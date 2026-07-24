@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
-import { r2, R2_BUCKET, r2KeyFromPublicUrl } from "@/lib/r2/client";
+import { getR2Client, getR2Bucket, r2KeyFromPublicUrl } from "@/lib/r2/client";
 import { authorizeAdminOrStaff } from "@/lib/r2/authorize-admin";
 import { corsHeaders } from "@/lib/r2/cors";
 
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true, skipped: true }, { headers });
     }
 
-    await r2.send(new DeleteObjectCommand({ Bucket: R2_BUCKET, Key: key }));
+    await getR2Client().send(new DeleteObjectCommand({ Bucket: getR2Bucket(), Key: key }));
     return NextResponse.json({ success: true }, { headers });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to delete object";
