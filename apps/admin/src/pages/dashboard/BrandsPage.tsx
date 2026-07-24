@@ -292,7 +292,7 @@ export default function BrandsPage() {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 py-6">
               <FormField control={form.control} name="name" render={({ field }) => (<FormItem><FormLabel>Name</FormLabel><FormControl><Input {...field} disabled={formLoading} /></FormControl><FormMessage /></FormItem>)} />
-              <FormField control={form.control} name="image" render={({ field }) => (<FormItem><FormLabel>Brand Image (Optional)</FormLabel><FormControl><ImageUpload value={field.value ?? ""} onChange={field.onChange} disabled={formLoading} /></FormControl><FormMessage /></FormItem>)} />
+              <FormField control={form.control} name="image" render={({ field }) => (<FormItem><FormLabel>Brand Image (Optional)</FormLabel><FormControl><ImageUpload value={field.value ?? ""} onChange={field.onChange} disabled={formLoading} folder="brands" /></FormControl><FormMessage /></FormItem>)} />
               <SheetFooter className="gap-2">
                 <Button type="button" variant="outline" onClick={() => setIsSidebarOpen(false)} disabled={formLoading}>Cancel</Button>
                 <Button type="submit" disabled={formLoading}>{formLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{isEditMode ? "Updating..." : "Creating..."}</> : isEditMode ? "Update Brand" : "Create Brand"}</Button>

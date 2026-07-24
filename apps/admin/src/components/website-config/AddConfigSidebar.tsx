@@ -11,7 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
-import { uploadToSupabase } from "@/lib/storage";
+import { uploadToR2 } from "@/lib/r2-upload";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import type { WebsiteConfig } from "@/pages/dashboard/WebsiteConfigPage";
 
@@ -155,7 +155,7 @@ export default function AddConfigSidebar({
     const uploadedUrls: string[] = [];
     try {
       for (let i = 0; i < files.length; i++) {
-        const url = await uploadToSupabase(files[i], "banners");
+        const url = await uploadToR2(files[i], "banners");
         uploadedUrls.push(url);
       }
       const currentImages = (formData.settings.images || []) as string[];

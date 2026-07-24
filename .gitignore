@@ -1,3 +1,6 @@
+# R2 migration script output (URLs/paths, regenerated per run)
+scripts/r2-migration/logs/
+
 # Environment files — never commit secrets
 .env
 .env.local

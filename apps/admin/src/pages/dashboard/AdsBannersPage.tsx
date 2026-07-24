@@ -576,6 +576,7 @@ export default function AdsBannersPage() {
                         value={field.value}
                         onChange={field.onChange}
                         disabled={formLoading}
+                        folder="ads_banners"
                       />
                     </FormControl>
                     <FormMessage />
@@ -761,6 +762,7 @@ export default function AdsBannersPage() {
                         value={field.value}
                         onChange={field.onChange}
                         disabled={formLoading}
+                        folder="ads_banners"
                       />
                     </FormControl>
                     <FormMessage />

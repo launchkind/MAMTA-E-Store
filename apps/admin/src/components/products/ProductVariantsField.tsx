@@ -141,6 +141,7 @@ export function ProductVariantsField({ control, name, disabled }: ProductVariant
                         value={field.value ?? ""}
                         onChange={field.onChange}
                         disabled={disabled}
+                        folder="product_variants"
                       />
                     </FormControl>
                     <FormMessage />

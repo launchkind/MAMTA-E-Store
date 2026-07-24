@@ -856,6 +856,7 @@ export default function ProductTypesPage() {
                         value={field.value ?? ""}
                         onChange={field.onChange}
                         disabled={formLoading}
+                        folder="product_types"
                       />
                     </FormControl>
                     <FormMessage />

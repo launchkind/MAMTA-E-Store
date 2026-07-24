@@ -439,6 +439,7 @@ export default function WebsiteIconsPage() {
                         value={field.value}
                         onChange={field.onChange}
                         disabled={formLoading}
+                        folder="website_icons"
                       />
                     </FormControl>
                     <FormMessage />
@@ -530,6 +531,7 @@ export default function WebsiteIconsPage() {
                         value={field.value}
                         onChange={field.onChange}
                         disabled={formLoading}
+                        folder="website_icons"
                       />
                     </FormControl>
                     <FormMessage />

@@ -415,7 +415,7 @@ const SellerConfigList = () => {
             </div>
             <div className="space-y-2">
               <Label>Store Logo/Image</Label>
-              <ImageUpload value={sellerForm.logo} onChange={(base64) => setSellerForm((p) => ({ ...p, logo: base64 }))} disabled={creating} />
+              <ImageUpload value={sellerForm.logo} onChange={(url) => setSellerForm((p) => ({ ...p, logo: url }))} disabled={creating} folder="sellers" />
             </div>
             <Separator />
             <h4 className="font-semibold text-sm text-muted-foreground uppercase flex items-center gap-2"><MapPin size={16} />Address (Optional)</h4>
@@ -500,7 +500,7 @@ const SellerConfigList = () => {
             </div>
             <div className="space-y-2">
               <Label>Store Logo/Image</Label>
-              <ImageUpload value={sellerForm.logo} onChange={(base64) => setSellerForm((p) => ({ ...p, logo: base64 }))} disabled={updating} />
+              <ImageUpload value={sellerForm.logo} onChange={(url) => setSellerForm((p) => ({ ...p, logo: url }))} disabled={updating} folder="sellers" />
             </div>
             <Separator />
             <h4 className="font-semibold text-sm text-muted-foreground uppercase flex items-center gap-2"><MapPin size={16} />Address (Optional)</h4>

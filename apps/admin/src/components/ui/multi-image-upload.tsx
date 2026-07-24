@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { X, Upload, Loader2 } from "lucide-react";
 import { Button } from "./button";
-import { uploadToSupabase, deleteFromSupabase } from "@/lib/storage";
+import { uploadToR2, deleteFromR2 } from "@/lib/r2-upload";
 
 interface MultiImageUploadProps {
   value: string[];
@@ -66,7 +66,7 @@ export function MultiImageUpload({
 
     const uploadPromises = Array.from(files).map(async (file, index) => {
       try {
-        const url = await uploadToSupabase(file, "products");
+        const url = await uploadToR2(file, "products");
         URL.revokeObjectURL(newUploading[index].preview);
         return url;
       } catch (error) {
@@ -128,7 +128,7 @@ export function MultiImageUpload({
 
     try {
       setDeletingIndex(index);
-      await deleteFromSupabase(imageUrl, "products");
+      await deleteFromR2(imageUrl);
       onChange(value.filter((_, i) => i !== index));
     } catch (error) {
       console.error("Error deleting image:", error);

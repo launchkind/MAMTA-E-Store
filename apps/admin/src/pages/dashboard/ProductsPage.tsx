@@ -37,6 +37,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { MultiImageUpload } from "@/components/ui/multi-image-upload";
+import { deleteFromR2, resolveImagesToR2 } from "@/lib/r2-upload";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { NestedCategorySelector } from "@/components/products/NestedCategorySelector";
 import {
@@ -237,9 +238,14 @@ export default function ProductsPage() {
     })),
   });
 
-  // No-op: image deletion from storage requires a backend integration
   const deleteImagesFromStorage = async (imageUrls: string[]) => {
-    console.warn("Image deletion from storage not implemented:", imageUrls);
+    await Promise.all(
+      imageUrls
+        .filter((url) => url && !url.startsWith("data:"))
+        .map((url) =>
+          deleteFromR2(url).catch((err) => console.warn("Failed to delete image from R2:", url, err)),
+        ),
+    );
   };
 
   const formAdd = useForm<FormData>({
@@ -612,8 +618,7 @@ export default function ProductsPage() {
   const handleAddProduct = async (data: FormData) => {
     setFormLoading(true);
     try {
-      // Image upload to CDN requires a backend; base64 images are stored as-is for now.
-      const uploadedImageUrls = data.images;
+      const uploadedImageUrls = await resolveImagesToR2(data.images, "products");
 
       const { data: newProduct, error } = await supabase
         .from("products")
@@ -652,18 +657,19 @@ export default function ProductsPage() {
 
       // Insert variants
       if (data.variants && data.variants.length > 0 && newProduct) {
-        await supabase.from("product_variants").insert(
-          data.variants.map((v, i) => ({
+        const variantRows = await Promise.all(
+          data.variants.map(async (v, i) => ({
             product_id: newProduct.id,
             color: v.color || null,
             storage: v.storage || null,
             price: v.price ?? null,
             stock: Number(v.stock),
-            images: v.images ?? [],
+            images: await resolveImagesToR2(v.images ?? [], "product_variants"),
             sku: v.sku || null,
             is_default: i === 0,
           })),
         );
+        await supabase.from("product_variants").insert(variantRows);
       }
 
       toast({
@@ -695,16 +701,16 @@ export default function ProductsPage() {
 
     setFormLoading(true);
     try {
-      // Image upload to CDN requires a backend; base64 images are stored as-is for now.
-      const updatedImageUrls = data.images;
-
-      // Note removed images (no-op deletion since we have no CDN backend)
+      // Any images still older than not-yet-uploaded (data: URI) must be
+      // uploaded to R2 before saving; already-uploaded URLs pass through.
       const removedImages = selectedProduct.images.filter(
-        (oldUrl) => !updatedImageUrls.includes(oldUrl),
+        (oldUrl) => !data.images.includes(oldUrl),
       );
       if (removedImages.length > 0) {
         await deleteImagesFromStorage(removedImages);
       }
+
+      const updatedImageUrls = await resolveImagesToR2(data.images, "products");
 
       const { error } = await supabase
         .from("products")
@@ -745,18 +751,19 @@ export default function ProductsPage() {
         .delete()
         .eq("product_id", selectedProduct._id);
       if (data.variants && data.variants.length > 0) {
-        await supabase.from("product_variants").insert(
-          data.variants.map((v, i) => ({
+        const variantRows = await Promise.all(
+          data.variants.map(async (v, i) => ({
             product_id: selectedProduct._id,
             color: v.color || null,
             storage: v.storage || null,
             price: v.price ?? null,
             stock: Number(v.stock),
-            images: v.images ?? [],
+            images: await resolveImagesToR2(v.images ?? [], "product_variants"),
             sku: v.sku || null,
             is_default: i === 0,
           })),
         );
+        await supabase.from("product_variants").insert(variantRows);
       }
 
       toast({

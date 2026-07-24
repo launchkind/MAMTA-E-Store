@@ -568,6 +568,7 @@ export default function ProductBannersPage() {
                         value={field.value}
                         onChange={field.onChange}
                         disabled={formLoading}
+                        folder="product_banners"
                       />
                     </FormControl>
                     <FormMessage />

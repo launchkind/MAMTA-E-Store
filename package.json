@@ -21,9 +21,16 @@
     "type-check": "turbo type-check",
     "migrate:data": "tsx scripts/migrate-data.ts",
     "seed:data": "node scripts/seed-data.js",
-    "export:data": "node scripts/export-data.js"
+    "export:data": "node scripts/export-data.js",
+    "r2:copy-buckets": "tsx scripts/r2-migration/01-copy-storage-buckets.ts",
+    "r2:migrate-base64": "tsx scripts/r2-migration/02-migrate-base64-columns.ts",
+    "r2:verify": "tsx scripts/r2-migration/03-verify-samples.ts",
+    "r2:update-db": "tsx scripts/r2-migration/04-update-db-urls.ts",
+    "r2:rollback": "tsx scripts/r2-migration/05-rollback.ts"
   },
   "devDependencies": {
+    "@aws-sdk/client-s3": "^3.1094.0",
+    "@supabase/supabase-js": "^2.108.2",
     "@turbo/gen": "^2.8.17",
     "@typescript-eslint/eslint-plugin": "^8.57.0",
     "@typescript-eslint/parser": "^8.57.0",
@@ -31,7 +38,7 @@
     "eslint": "^10.0.3",
     "mongoose": "^9.3.0",
     "prettier": "^3.8.1",
-    "tsx": "^4.21.0",
+    "tsx": "^4.22.4",
     "turbo": "^2.8.17",
     "typescript": "^5.9.3"
   },

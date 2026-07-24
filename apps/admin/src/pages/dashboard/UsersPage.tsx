@@ -1014,6 +1014,7 @@ export default function UsersPage() {
                         value={field.value ?? ""}
                         onChange={field.onChange}
                         disabled={formLoading}
+                        folder="avatars"
                       />
                     </FormControl>
                     <FormMessage className="text-red-500 text-xs" />
@@ -1418,6 +1419,7 @@ export default function UsersPage() {
                         value={field.value ?? ""}
                         onChange={field.onChange}
                         disabled={formLoading}
+                        folder="avatars"
                       />
                     </FormControl>
                     <FormMessage className="text-red-500 text-xs" />

@@ -1321,6 +1321,7 @@ export default function CategoriesPage() {
                           value={field.value ?? ""}
                           onChange={field.onChange}
                           disabled={formLoading}
+                          folder="categories"
                         />
                       </FormControl>
                       <FormMessage />
@@ -1339,6 +1340,7 @@ export default function CategoriesPage() {
                           value={field.value ?? ""}
                           onChange={(url) => field.onChange(url)}
                           disabled={formLoading}
+                          folder="categories"
                         />
                       </FormControl>
                       <FormMessage />
@@ -1617,6 +1619,7 @@ export default function CategoriesPage() {
                           value={field.value ?? ""}
                           onChange={field.onChange}
                           disabled={formLoading}
+                          folder="categories"
                         />
                       </FormControl>
                       <FormMessage />
@@ -1635,6 +1638,7 @@ export default function CategoriesPage() {
                           value={field.value ?? ""}
                           onChange={(url) => field.onChange(url)}
                           disabled={formLoading}
+                          folder="categories"
                         />
                       </FormControl>
                       <FormMessage />

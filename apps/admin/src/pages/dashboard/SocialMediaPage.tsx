@@ -797,6 +797,7 @@ export default function SocialMediaPage() {
                       <ImageUpload
                         value={field.value || ""}
                         onChange={field.onChange}
+                        folder="social_media"
                       />
                     </FormControl>
                     <FormMessage />
@@ -943,6 +944,7 @@ export default function SocialMediaPage() {
                       <ImageUpload
                         value={field.value || ""}
                         onChange={field.onChange}
+                        folder="social_media"
                       />
                     </FormControl>
                     <FormMessage />

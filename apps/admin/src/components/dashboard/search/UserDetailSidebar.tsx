@@ -269,6 +269,7 @@ export default function UserDetailSidebar({
                           <ImageUpload
                             value={field.value || ""}
                             onChange={field.onChange}
+                            folder="avatars"
                           />
                         </FormControl>
                         <FormMessage />

@@ -951,6 +951,7 @@ export default function BannersPage() {
                         value={field.value}
                         onChange={field.onChange}
                         disabled={formLoading}
+                        folder="banners"
                       />
                     </FormControl>
                     <FormMessage />
@@ -973,6 +974,7 @@ export default function BannersPage() {
                         value={field.value || ""}
                         onChange={field.onChange}
                         disabled={formLoading}
+                        folder="banners"
                       />
                     </FormControl>
                     <FormMessage />
@@ -1147,6 +1149,7 @@ export default function BannersPage() {
                         value={field.value}
                         onChange={field.onChange}
                         disabled={formLoading}
+                        folder="banners"
                       />
                     </FormControl>
                     <FormMessage />
@@ -1169,6 +1172,7 @@ export default function BannersPage() {
                         value={field.value || ""}
                         onChange={field.onChange}
                         disabled={formLoading}
+                        folder="banners"
                       />
                     </FormControl>
                     <FormMessage />
