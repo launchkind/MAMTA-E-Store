@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
+import { deleteManyFromR2 } from "@/lib/r2-upload";
 import AddConfigSidebar from "@/components/website-config/AddConfigSidebar";
 import ViewConfigSidebar from "@/components/website-config/ViewConfigSidebar";
 import ConfigSkeleton from "@/components/website-config/ConfigSkeleton";
@@ -163,8 +164,13 @@ export default function WebsiteConfigPage() {
   const confirmDelete = async () => {
     if (!configToDelete) return;
     try {
+      const images = (configs.find((c) => c.id === configToDelete)?.settings.images ?? []) as string[];
+
       const { error } = await supabase.from("page_components").delete().eq("id", configToDelete);
       if (error) throw error;
+
+      deleteManyFromR2(images);
+
       toast({ title: "Success", description: "Configuration deleted successfully" });
       fetchConfigs(activeTab);
     } catch (error) {

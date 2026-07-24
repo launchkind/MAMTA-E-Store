@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { supabase } from "@/lib/supabase";
+import { deleteManyFromR2 } from "@/lib/r2-upload";
 import { useToast } from "@/hooks/use-toast";
 import useAuthStore from "@/store/useAuthStore";
 import { Button } from "@/components/ui/button";
@@ -222,6 +223,8 @@ export default function WebsiteIconsPage() {
         .delete()
         .eq("id", selectedIcon._id);
       if (error) throw error;
+
+      deleteManyFromR2([selectedIcon.url]);
 
       toast({ title: "Success", description: "Icon deleted successfully" });
       setIsDeleteOpen(false);

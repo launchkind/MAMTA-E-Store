@@ -70,6 +70,7 @@ import {
 } from "lucide-react";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { supabase } from "@/lib/supabase";
+import { deleteManyFromR2 } from "@/lib/r2-upload";
 
 // Local type matching Supabase product_types table columns
 type ProductType = {
@@ -334,6 +335,8 @@ export default function ProductTypesPage() {
         .eq("id", selectedProductType._id);
 
       if (error) throw error;
+
+      deleteManyFromR2([selectedProductType.icon, ...(selectedProductType.banner_images ?? [])]);
 
       toast({
         title: "Success",

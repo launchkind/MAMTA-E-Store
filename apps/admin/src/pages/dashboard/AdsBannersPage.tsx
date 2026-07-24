@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 
 import { supabase } from "@/lib/supabase";
+import { deleteManyFromR2 } from "@/lib/r2-upload";
 import { useToast } from "@/hooks/use-toast";
 import { usePermissions } from "@/hooks/usePermissions";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -267,6 +268,8 @@ export default function AdsBannersPage() {
         .eq("id", selectedBanner._id);
       if (error) throw error;
 
+      deleteManyFromR2([selectedBanner.image]);
+
       toast({
         title: "Success",
         description: "Ads banner deleted successfully",
@@ -290,11 +293,15 @@ export default function AdsBannersPage() {
     if (selectedBanners.length === 0) return;
 
     try {
+      const imagesToDelete = banners.filter((b) => selectedBanners.includes(b._id)).map((b) => b.image);
+
       const { error } = await supabase
         .from("ads_banners")
         .delete()
         .in("id", selectedBanners);
       if (error) throw error;
+
+      deleteManyFromR2(imagesToDelete);
 
       toast({
         title: "Success",

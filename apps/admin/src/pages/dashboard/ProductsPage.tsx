@@ -37,7 +37,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { MultiImageUpload } from "@/components/ui/multi-image-upload";
-import { deleteFromR2, resolveImagesToR2 } from "@/lib/r2-upload";
+import { deleteFromR2, deleteManyFromR2, resolveImagesToR2 } from "@/lib/r2-upload";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { NestedCategorySelector } from "@/components/products/NestedCategorySelector";
 import {
@@ -813,6 +813,13 @@ export default function ProductsPage() {
   const confirmBulkDelete = async () => {
     try {
       setDeletingProductIds((prev) => [...prev, ...selectedProducts]);
+
+      // Gather every image URL (products + their variants) before the rows are gone.
+      const { data: rowsToDelete } = await supabase
+        .from("products")
+        .select("image, images, product_variants(images)")
+        .in("id", selectedProducts);
+
       // Remove product type associations first
       await supabase
         .from("product_product_types")
@@ -824,6 +831,13 @@ export default function ProductsPage() {
         .delete()
         .in("id", selectedProducts);
       if (error) throw error;
+
+      const imageUrls = (rowsToDelete ?? []).flatMap((row) => [
+        row.image,
+        ...(row.images ?? []),
+        ...((row.product_variants ?? []) as { images: string[] | null }[]).flatMap((v) => v.images ?? []),
+      ]);
+      deleteManyFromR2(imageUrls);
 
       toast({
         title: "Success",
@@ -862,6 +876,12 @@ export default function ProductsPage() {
         .delete()
         .eq("id", selectedProduct._id);
       if (error) throw error;
+
+      deleteManyFromR2([
+        selectedProduct.image,
+        ...(selectedProduct.images ?? []),
+        ...(selectedProduct.variants ?? []).flatMap((v) => v.images ?? []),
+      ]);
 
       toast({
         title: "Success",

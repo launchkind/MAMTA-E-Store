@@ -1,6 +1,7 @@
 ﻿/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/lib/supabase";
+import { deleteManyFromR2 } from "@/lib/r2-upload";
 import { useToast } from "@/hooks/use-toast";
 import useAuthStore from "@/store/useAuthStore";
 import { usePermissions } from "@/hooks/usePermissions";
@@ -151,8 +152,10 @@ export default function BrandsPage() {
     if (!selectedBrand && selectedBrands.length > 0) {
       try {
         setDeletingBrandIds((p) => [...p, ...selectedBrands]);
+        const imagesToDelete = brands.filter((b) => selectedBrands.includes(b.id)).map((b) => b.image);
         const { error } = await supabase.from("brands").delete().in("id", selectedBrands);
         if (error) throw error;
+        deleteManyFromR2(imagesToDelete);
         toast({ title: "Success", description: `Deleted ${selectedBrands.length} brands` });
         setSelectedBrands([]);
         setIsDeleteModalOpen(false);
@@ -169,6 +172,7 @@ export default function BrandsPage() {
       setDeletingBrandIds((p) => [...p, selectedBrand.id]);
       const { error } = await supabase.from("brands").delete().eq("id", selectedBrand.id);
       if (error) throw error;
+      deleteManyFromR2([selectedBrand.image]);
       toast({ title: "Success", description: "Brand deleted" });
       setIsDeleteModalOpen(false);
       const pages = Math.ceil((total - 1) / perPage);

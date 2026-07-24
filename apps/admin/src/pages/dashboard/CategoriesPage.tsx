@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { supabase } from "@/lib/supabase";
+import { deleteManyFromR2 } from "@/lib/r2-upload";
 
 import { useToast } from "@/hooks/use-toast";
 import { usePermissions } from "@/hooks/usePermissions";
@@ -512,11 +513,18 @@ export default function CategoriesPage() {
   const confirmBulkDelete = async () => {
     try {
       setDeletingCategoryIds((prev) => [...prev, ...selectedCategories]);
+      const { data: rowsToDelete } = await supabase
+        .from("categories")
+        .select("image, icon_image")
+        .in("id", selectedCategories);
+
       const { error } = await supabase
         .from("categories")
         .delete()
         .in("id", selectedCategories);
       if (error) throw error;
+
+      deleteManyFromR2((rowsToDelete ?? []).flatMap((row) => [row.image, row.icon_image]));
 
       toast({
         title: "Success",
@@ -558,6 +566,8 @@ export default function CategoriesPage() {
         .delete()
         .eq("id", selectedCategory._id);
       if (error) throw error;
+
+      deleteManyFromR2([selectedCategory.image, selectedCategory.iconImage]);
 
       toast({
         title: "Success",

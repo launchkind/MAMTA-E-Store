@@ -27,9 +27,10 @@ async function authHeader(): Promise<Record<string, string>> {
 }
 
 export async function uploadToR2(file: File, folder: UploadFolder): Promise<string> {
+  const auth = await authHeader();
   const presignRes = await fetch(`${UPLOAD_API_URL}/api/r2/presign`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", ...(await authHeader()) },
+    headers: { "Content-Type": "application/json", ...auth },
     body: JSON.stringify({ folder, contentType: file.type }),
   });
   const presignBody = await presignRes.json();
@@ -82,13 +83,24 @@ export async function resolveImageToR2(image: string, folder: UploadFolder): Pro
 }
 
 export async function deleteFromR2(url: string): Promise<void> {
+  const auth = await authHeader();
   const res = await fetch(`${UPLOAD_API_URL}/api/r2/delete`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", ...(await authHeader()) },
+    headers: { "Content-Type": "application/json", ...auth },
     body: JSON.stringify({ url }),
   });
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
     throw new Error(body.message || `Delete failed: ${res.status}`);
   }
+}
+
+// Best-effort cleanup for a batch of image URLs (e.g. every image on a row
+// being deleted). Skips empty/non-R2 values and never throws — a storage
+// cleanup failure should not block the row from being deleted.
+export async function deleteManyFromR2(urls: (string | null | undefined)[]): Promise<void> {
+  const targets = urls.filter((u): u is string => !!u && !u.startsWith("data:"));
+  await Promise.all(
+    targets.map((url) => deleteFromR2(url).catch((err) => console.warn("Failed to delete image from R2:", url, err))),
+  );
 }

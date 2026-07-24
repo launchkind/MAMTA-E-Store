@@ -2,6 +2,7 @@
 import { useState, useEffect, useMemo } from "react";
 
 import { supabase } from "@/lib/supabase";
+import { deleteManyFromR2 } from "@/lib/r2-upload";
 import { useToast } from "@/hooks/use-toast";
 import useAuthStore from "@/store/useAuthStore";
 import { usePermissions } from "@/hooks/usePermissions";
@@ -326,6 +327,7 @@ export default function ProductBannersPage() {
         .eq("id", selectedBanner._id);
 
       if (error) throw error;
+      deleteManyFromR2([selectedBanner.image]);
       toast({ title: "Success", description: "Banner deleted successfully" });
       setIsDeleteModalOpen(false);
       fetchBanners(currentPage);
